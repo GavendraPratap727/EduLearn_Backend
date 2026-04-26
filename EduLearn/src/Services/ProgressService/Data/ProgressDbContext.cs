@@ -10,6 +10,7 @@ namespace EduLearn.ProgressService.Data
         }
 
         public DbSet<LessonProgress> LessonProgress { get; set; }
+public DbSet<Certificate> Certificates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +23,13 @@ namespace EduLearn.ProgressService.Data
                 entity.Property(e => e.IsCompleted).HasDefaultValue(false);
                 entity.Property(e => e.WatchedSeconds).HasDefaultValue(0);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+            });
+
+            modelBuilder.Entity<Certificate>(entity =>
+            {
+                entity.HasKey(e => e.CertificateId);
+                entity.HasIndex(e => e.VerificationCode).IsUnique();
+                entity.Property(e => e.IssuedAt).HasDefaultValueSql("datetime('now')");
             });
         }
     }

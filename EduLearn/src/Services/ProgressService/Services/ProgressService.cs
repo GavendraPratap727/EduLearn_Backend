@@ -1,6 +1,9 @@
 using EduLearn.ProgressService.Models;
 using EduLearn.ProgressService.Repositories;
 using System.Net.Http.Json;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace EduLearn.ProgressService.Services
 {
@@ -255,6 +258,119 @@ namespace EduLearn.ProgressService.Services
                 LastWatchedAt = progress.LastWatchedAt,
                 CompletedAt = progress.CompletedAt,
                 CreatedAt = progress.CreatedAt
+            };
+        }
+
+        // Certificate methods
+        public async Task<CertificateResponse> IssueCertificateAsync(IssueCertificateRequest request)
+        {
+            // Check if certificate already exists
+            var existingCertificate = await _repository.FindCertificateByStudentAndCourseAsync(request.StudentId, request.CourseId);
+            if (existingCertificate != null)
+            {
+                return new CertificateResponse
+                {
+                    Success = false,
+                    Message = "Certificate already issued for this course"
+                };
+            }
+
+            // Create certificate entity
+            var certificate = new Certificate
+            {
+                CertificateId = Guid.NewGuid().ToString("N").ToUpper(),
+                StudentId = request.StudentId,
+                CourseId = request.CourseId,
+                IssuedAt = DateTime.UtcNow,
+                VerificationCode = Guid.NewGuid().ToString("N").ToUpper()
+            };
+
+            // Generate PDF certificate (simplified - in production would upload to Azure Blob)
+            var certificateUrl = await GenerateCertificatePdfAsync(certificate);
+            certificate.CertificateUrl = certificateUrl;
+
+            var createdCertificate = await _repository.AddCertificateAsync(certificate);
+
+            return new CertificateResponse
+            {
+                Success = true,
+                Message = "Certificate issued successfully",
+                Certificate = MapToCertificateDto(createdCertificate)
+            };
+        }
+
+        public async Task<CertificateResponse> GetCertificateByIdAsync(string certificateId)
+        {
+            var certificate = await _repository.FindCertificateByIdAsync(certificateId);
+            if (certificate == null)
+            {
+                return new CertificateResponse
+                {
+                    Success = false,
+                    Message = "Certificate not found"
+                };
+            }
+
+            return new CertificateResponse
+            {
+                Success = true,
+                Message = "Certificate found",
+                Certificate = MapToCertificateDto(certificate)
+            };
+        }
+
+        public async Task<CertificateResponse> GetCertificatesByStudentAsync(Guid studentId)
+        {
+            var certificates = await _repository.FindCertificatesByStudentAsync(studentId);
+            return new CertificateResponse
+            {
+                Success = true,
+                Message = $"Found {certificates.Count} certificates"
+            };
+        }
+
+        public async Task<CertificateResponse> VerifyCertificateAsync(string verificationCode)
+        {
+            var certificate = await _repository.FindCertificateByVerificationCodeAsync(verificationCode);
+            if (certificate == null)
+            {
+                return new CertificateResponse
+                {
+                    Success = false,
+                    Message = "Invalid verification code"
+                };
+            }
+
+            return new CertificateResponse
+            {
+                Success = true,
+                Message = "Certificate verified",
+                Certificate = MapToCertificateDto(certificate)
+            };
+        }
+
+        private async Task<string> GenerateCertificatePdfAsync(Certificate certificate)
+        {
+            // In a real implementation, this would:
+            // 1. Generate PDF using QuestPDF
+            // 2. Upload to Azure Blob Storage
+            // 3. Return SAS URL
+
+            // For now, return a placeholder URL
+            // TODO: Implement actual PDF generation and Azure Blob upload
+            return $"https://edulearn-certificates.blob.core.windows.net/certificates/{certificate.CertificateId}.pdf";
+        }
+
+        private CertificateDto MapToCertificateDto(Certificate certificate)
+        {
+            return new CertificateDto
+            {
+                CertificateId = certificate.CertificateId,
+                StudentId = certificate.StudentId,
+                CourseId = certificate.CourseId,
+                IssuedAt = certificate.IssuedAt,
+                CertificateUrl = certificate.CertificateUrl,
+                VerificationCode = certificate.VerificationCode
             };
         }
     }

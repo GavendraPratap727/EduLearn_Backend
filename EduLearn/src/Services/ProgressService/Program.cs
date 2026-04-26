@@ -209,4 +209,49 @@ app.MapGet("/api/progress/stats/{id}", async (Guid id, HttpContext context, IPro
 .WithName("GetOverallStats")
 .WithOpenApi();
 
+// Certificate endpoints
+app.MapPost("/api/progress/certificates/issue", async (IssueCertificateRequest request, IProgressService progressService) =>
+{
+    var result = await progressService.IssueCertificateAsync(request);
+    return Results.Ok(result);
+})
+.RequireAuthorization("Authenticated")
+.WithName("IssueCertificate")
+.WithOpenApi();
+
+app.MapGet("/api/progress/certificates/{id}", async (string id, IProgressService progressService) =>
+{
+    var result = await progressService.GetCertificateByIdAsync(id);
+    return result.Success ? Results.Ok(result) : Results.NotFound(result);
+})
+.RequireAuthorization("Authenticated")
+.WithName("GetCertificateById")
+.WithOpenApi();
+
+app.MapGet("/api/progress/certificates/student/{studentId}", async (Guid studentId, HttpContext context, IProgressService progressService) =>
+{
+    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
+    {
+        var userRole = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        if (currentUserId != studentId && userRole != "ADMIN")
+        {
+            return Results.Forbid();
+        }
+    }
+    var result = await progressService.GetCertificatesByStudentAsync(studentId);
+    return Results.Ok(result);
+})
+.RequireAuthorization("Authenticated")
+.WithName("GetCertificatesByStudent")
+.WithOpenApi();
+
+app.MapGet("/api/progress/certificates/verify/{verificationCode}", async (string verificationCode, IProgressService progressService) =>
+{
+    var result = await progressService.VerifyCertificateAsync(verificationCode);
+    return Results.Ok(result);
+})
+.WithName("VerifyCertificate")
+.WithOpenApi();
+
 app.Run();
