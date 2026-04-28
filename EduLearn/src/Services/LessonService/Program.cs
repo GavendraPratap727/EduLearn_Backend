@@ -94,7 +94,7 @@ app.MapPost("/api/lessons", async (CreateLessonRequest request, ILessonService l
     var result = await lessonService.AddLessonAsync(request);
     return Results.Ok(result);
 })
-.RequireAuthorization()
+.RequireAuthorization("InstructorOrAdmin")
 .WithName("AddLesson")
 .WithOpenApi();
 

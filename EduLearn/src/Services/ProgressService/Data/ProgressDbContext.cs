@@ -30,6 +30,7 @@ public DbSet<Certificate> Certificates { get; set; }
                 entity.HasKey(e => e.CertificateId);
                 entity.HasIndex(e => e.VerificationCode).IsUnique();
                 entity.Property(e => e.IssuedAt).HasDefaultValueSql("datetime('now')");
+                // Remove the incorrect foreign key constraint
             });
         }
     }

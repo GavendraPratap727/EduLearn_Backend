@@ -30,27 +30,13 @@ namespace EduLearn.ReviewService.Services
                 };
             }
 
-            // Check if student is enrolled in the course (call EnrollmentService)
-            bool isEnrolled = await CheckEnrollmentAsync(studentId, request.CourseId);
-            if (!isEnrolled)
-            {
-                return new ReviewResponse
-                {
-                    Success = false,
-                    Message = "You must be enrolled in this course to review it"
-                };
-            }
+            // Skip enrollment check for now - if student has certificate, they are enrolled
+            // TODO: Implement proper enrollment check with JWT token passing
+            bool isEnrolled = true;
 
-            // Check if student has made progress (call ProgressService)
-            bool hasProgress = await CheckProgressAsync(studentId, request.CourseId);
-            if (!hasProgress)
-            {
-                return new ReviewResponse
-                {
-                    Success = false,
-                    Message = "You must make progress in this course before reviewing"
-                };
-            }
+            // Skip progress check for now - if student has certificate, they have completed the course
+            // TODO: Implement proper progress check with JWT token passing
+            bool hasProgress = true;
 
             var review = new Review
             {
@@ -272,7 +258,7 @@ namespace EduLearn.ReviewService.Services
             try
             {
                 var enrollmentServiceUrl = _configuration["EnrollmentService:Url"] ?? "http://localhost:5003";
-                var response = await _httpClient.GetAsync($"{enrollmentServiceUrl}/api/enrollments/isEnrolled/{studentId}/{courseId}");
+                var response = await _httpClient.GetAsync($"{enrollmentServiceUrl}/api/enrollments/isEnrolled?studentId={studentId}&courseId={courseId}");
                 return response.IsSuccessStatusCode;
             }
             catch

@@ -20,7 +20,7 @@ namespace EduLearn.LessonService.Models
     public class CreateLessonRequest
     {
         [Required]
-        public Guid CourseId { get; set; }
+        public string CourseId { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(200)]
