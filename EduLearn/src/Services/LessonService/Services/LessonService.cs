@@ -14,10 +14,19 @@ namespace EduLearn.LessonService.Services
 
         public async Task<LessonResponse> AddLessonAsync(CreateLessonRequest request)
         {
+            if (!Guid.TryParse(request.CourseId, out var courseId))
+            {
+                return new LessonResponse
+                {
+                    Success = false,
+                    Message = "Invalid CourseId format. CourseId must be a valid GUID (e.g., '123e4567-e89b-12d3-a456-426614174000')"
+                };
+            }
+
             var lesson = new Lesson
             {
                 LessonId = Guid.NewGuid(),
-                CourseId = request.CourseId,
+                CourseId = courseId,
                 Title = request.Title,
                 Description = request.Description,
                 ContentType = request.ContentType,

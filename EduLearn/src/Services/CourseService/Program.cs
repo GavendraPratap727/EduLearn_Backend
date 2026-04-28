@@ -231,7 +231,6 @@ app.MapPost("/api/courses/{id}/increment-enrollment", async (Guid id, ICourseSer
     await courseService.IncrementEnrollmentAsync(id);
     return Results.Ok(new { Success = true, Message = "Enrollment incremented successfully" });
 })
-.RequireAuthorization("Authenticated")
 .WithName("IncrementEnrollment")
 .WithOpenApi();
 

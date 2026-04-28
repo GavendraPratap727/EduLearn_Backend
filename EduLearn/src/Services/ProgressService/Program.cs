@@ -11,6 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -84,6 +95,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -108,7 +120,7 @@ app.MapGet("/api/progress/{id}", async (Guid id, IProgressService progressServic
 
 app.MapGet("/api/progress/student/{studentId}/lesson/{lessonId}", async (Guid studentId, Guid lessonId, HttpContext context, IProgressService progressService) =>
 {
-    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var currentUserIdClaim = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
     if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
     {
         // Students can only view their own progress, Admins can view any
@@ -127,7 +139,7 @@ app.MapGet("/api/progress/student/{studentId}/lesson/{lessonId}", async (Guid st
 
 app.MapGet("/api/progress/student/{id}", async (Guid id, HttpContext context, IProgressService progressService) =>
 {
-    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var currentUserIdClaim = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
     if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
     {
         // Students can only view their own progress, Admins can view any
@@ -155,7 +167,7 @@ app.MapGet("/api/progress/course/{id}", async (Guid id, IProgressService progres
 
 app.MapGet("/api/progress/course/{courseId}/student/{studentId}", async (Guid courseId, Guid studentId, HttpContext context, IProgressService progressService) =>
 {
-    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var currentUserIdClaim = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
     if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
     {
         // Students can only view their own progress, Admins can view any
@@ -192,7 +204,7 @@ app.MapPut("/api/progress/{id}/complete", async (Guid id, IProgressService progr
 
 app.MapGet("/api/progress/stats/{id}", async (Guid id, HttpContext context, IProgressService progressService) =>
 {
-    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var currentUserIdClaim = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
     if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
     {
         // Students can only view their own stats, Admins can view any
@@ -230,7 +242,7 @@ app.MapGet("/api/progress/certificates/{id}", async (string id, IProgressService
 
 app.MapGet("/api/progress/certificates/student/{studentId}", async (Guid studentId, HttpContext context, IProgressService progressService) =>
 {
-    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var currentUserIdClaim = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
     if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
     {
         var userRole = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;

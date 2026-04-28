@@ -11,6 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -81,6 +92,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -148,11 +160,20 @@ app.MapPut("/api/quizzes/{id}/publish", async (Guid id, IQuizService quizService
 .WithName("PublishQuiz")
 .WithOpenApi();
 
-app.MapPost("/api/quizzes/attempt/start", async (HttpContext context, StartAttemptRequest request, IQuizService quizService) =>
+app.MapPost("/api/quizzes/attempt/start", async (HttpContext context, StartAttemptRequest request, IQuizService quizService, ILogger<Program> logger) =>
 {
+    logger.LogInformation("User authenticated: {IsAuthenticated}", context.User.Identity?.IsAuthenticated);
+    foreach (var claim in context.User.Claims)
+    {
+        logger.LogInformation("Claim: {Type} = {Value}", claim.Type, claim.Value);
+    }
+    
     var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    logger.LogInformation("Found nameid claim: {Claim}", currentUserIdClaim);
+    
     if (!Guid.TryParse(currentUserIdClaim, out Guid studentId))
     {
+        logger.LogWarning("Failed to parse user ID from claim: {Claim}", currentUserIdClaim);
         return Results.Unauthorized();
     }
 
