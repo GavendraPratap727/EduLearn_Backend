@@ -14,5 +14,13 @@ namespace EduLearn.ProgressService.Repositories
         Task<LessonProgress> AddAsync(LessonProgress progress);
         Task<LessonProgress> UpdateAsync(LessonProgress progress);
         Task DeleteAsync(Guid progressId);
+
+        // Certificate methods
+        Task<Certificate?> FindCertificateByIdAsync(string certificateId);
+        Task<Certificate?> FindCertificateByVerificationCodeAsync(string verificationCode);
+        Task<List<Certificate>> FindCertificatesByStudentAsync(Guid studentId);
+        Task<Certificate?> FindCertificateByStudentAndCourseAsync(Guid studentId, Guid courseId);
+        Task<Certificate> AddCertificateAsync(Certificate certificate);
+        Task<Certificate> UpdateCertificateAsync(Certificate certificate);
     }
 }

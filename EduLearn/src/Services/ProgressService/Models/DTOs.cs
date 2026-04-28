@@ -47,4 +47,31 @@ namespace EduLearn.ProgressService.Models
         public bool Success { get; set; }
         public Dictionary<string, int> Stats { get; set; } = new Dictionary<string, int>();
     }
+
+    // Certificate DTOs
+    public class CertificateDto
+    {
+        public string CertificateId { get; set; } = string.Empty;
+        public Guid StudentId { get; set; }
+        public Guid CourseId { get; set; }
+        public DateTime IssuedAt { get; set; }
+        public string? CertificateUrl { get; set; }
+        public string VerificationCode { get; set; } = string.Empty;
+    }
+
+    public class CertificateResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public CertificateDto? Certificate { get; set; }
+    }
+
+    public class IssueCertificateRequest
+    {
+        [Required]
+        public Guid StudentId { get; set; }
+
+        [Required]
+        public Guid CourseId { get; set; }
+    }
 }

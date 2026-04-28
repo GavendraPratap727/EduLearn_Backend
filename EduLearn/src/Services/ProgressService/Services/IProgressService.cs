@@ -13,5 +13,11 @@ namespace EduLearn.ProgressService.Services
         Task<LessonProgressResponse> UpdateProgressAsync(Guid progressId, UpdateLessonProgressRequest request);
         Task<LessonProgressResponse> MarkLessonCompleteAsync(Guid progressId);
         Task<OverallStatsResponse> GetOverallStatsAsync(Guid studentId);
+
+        // Certificate methods
+        Task<CertificateResponse> IssueCertificateAsync(IssueCertificateRequest request);
+        Task<CertificateResponse> GetCertificateByIdAsync(string certificateId);
+        Task<CertificateResponse> GetCertificatesByStudentAsync(Guid studentId);
+        Task<CertificateResponse> VerifyCertificateAsync(string verificationCode);
     }
 }

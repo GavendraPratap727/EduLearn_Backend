@@ -81,5 +81,44 @@ namespace EduLearn.ProgressService.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        // Certificate methods
+        public async Task<Certificate?> FindCertificateByIdAsync(string certificateId)
+        {
+            return await _context.Certificates.FindAsync(certificateId);
+        }
+
+        public async Task<Certificate?> FindCertificateByVerificationCodeAsync(string verificationCode)
+        {
+            return await _context.Certificates
+                .FirstOrDefaultAsync(c => c.VerificationCode == verificationCode);
+        }
+
+        public async Task<List<Certificate>> FindCertificatesByStudentAsync(Guid studentId)
+        {
+            return await _context.Certificates
+                .Where(c => c.StudentId == studentId)
+                .ToListAsync();
+        }
+
+        public async Task<Certificate?> FindCertificateByStudentAndCourseAsync(Guid studentId, Guid courseId)
+        {
+            return await _context.Certificates
+                .FirstOrDefaultAsync(c => c.StudentId == studentId && c.CourseId == courseId);
+        }
+
+        public async Task<Certificate> AddCertificateAsync(Certificate certificate)
+        {
+            await _context.Certificates.AddAsync(certificate);
+            await _context.SaveChangesAsync();
+            return certificate;
+        }
+
+        public async Task<Certificate> UpdateCertificateAsync(Certificate certificate)
+        {
+            _context.Certificates.Update(certificate);
+            await _context.SaveChangesAsync();
+            return certificate;
+        }
     }
 }
