@@ -1,0 +1,77 @@
+{
+  "Version": 1,
+  "Hash": "8zLsetmlY3g4a9ybc5Eb0BWLrHLs3w6KFD6JGGzAgNE=",
+  "Source": "EduLearn.ProgressService",
+  "BasePath": "_content/EduLearn.ProgressService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "EduLearn.ProgressService\\wwwroot",
+      "Source": "EduLearn.ProgressService",
+      "ContentRoot": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\",
+      "BasePath": "_content/EduLearn.ProgressService",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\certificates\\74674E50B31F45D381C7D9831FF4EF43.pdf",
+      "SourceId": "EduLearn.ProgressService",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\",
+      "BasePath": "_content/EduLearn.ProgressService",
+      "RelativePath": "certificates/74674E50B31F45D381C7D9831FF4EF43.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\certificates\\74674E50B31F45D381C7D9831FF4EF43.pdf"
+    },
+    {
+      "Identity": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\certificates\\76D9F47096ED40138BFC52A7E271C2FF.pdf",
+      "SourceId": "EduLearn.ProgressService",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\",
+      "BasePath": "_content/EduLearn.ProgressService",
+      "RelativePath": "certificates/76D9F47096ED40138BFC52A7E271C2FF.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\certificates\\76D9F47096ED40138BFC52A7E271C2FF.pdf"
+    },
+    {
+      "Identity": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\certificates\\B1C958C71B8F4AA9B2A2325C7523B99B.pdf",
+      "SourceId": "EduLearn.ProgressService",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\",
+      "BasePath": "_content/EduLearn.ProgressService",
+      "RelativePath": "certificates/B1C958C71B8F4AA9B2A2325C7523B99B.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\certificates\\B1C958C71B8F4AA9B2A2325C7523B99B.pdf"
+    }
+  ]
+}
