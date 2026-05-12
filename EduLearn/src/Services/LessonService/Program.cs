@@ -67,7 +67,13 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<LessonDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (connectionString != null && (connectionString.Contains("Data Source") || connectionString.Contains(".db")))
+        options.UseSqlite(connectionString);
+    else
+        options.UseNpgsql(connectionString);
+});
 
 // Add Repository
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
