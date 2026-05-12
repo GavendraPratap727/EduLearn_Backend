@@ -2,9 +2,8 @@ services:
   # AuthService
   - type: web
     name: edulearn-auth-service
-    env: dotnet
-    buildCommand: dotnet publish EduLearn/src/Services/AuthService/EduLearn.AuthService.csproj -c Release -o ./publish/auth
-    startCommand: dotnet ./publish/auth/EduLearn.AuthService.dll --urls "http://0.0.0.0:$PORT"
+    env: docker
+    dockerCommand: dotnet EduLearn.AuthService.dll --urls "http://0.0.0.0:$PORT"
     plan: free
     healthCheckPath: /api/auth/health
     envVars:
@@ -33,9 +32,8 @@ services:
   # CourseService
   - type: web
     name: edulearn-course-service
-    env: dotnet
-    buildCommand: dotnet publish EduLearn/src/Services/CourseService/EduLearn.CourseService.csproj -c Release -o ./publish/course
-    startCommand: dotnet ./publish/course/EduLearn.CourseService.dll --urls "http://0.0.0.0:$PORT"
+    env: docker
+    dockerCommand: dotnet EduLearn.CourseService.dll --urls "http://0.0.0.0:$PORT"
     plan: free
     healthCheckPath: /api/courses/health
     envVars:
@@ -58,9 +56,8 @@ services:
   # EnrollmentService
   - type: web
     name: edulearn-enrollment-service
-    env: dotnet
-    buildCommand: dotnet publish EduLearn/src/Services/EnrollmentService/EduLearn.EnrollmentService.csproj -c Release -o ./publish/enrollment
-    startCommand: dotnet ./publish/enrollment/EduLearn.EnrollmentService.dll --urls "http://0.0.0.0:$PORT"
+    env: docker
+    dockerCommand: dotnet EduLearn.EnrollmentService.dll --urls "http://0.0.0.0:$PORT"
     plan: free
     healthCheckPath: /api/enrollments/health
     envVars:
@@ -83,9 +80,8 @@ services:
   # LessonService
   - type: web
     name: edulearn-lesson-service
-    env: dotnet
-    buildCommand: dotnet publish EduLearn/src/Services/LessonService/EduLearn.LessonService.csproj -c Release -o ./publish/lesson
-    startCommand: dotnet ./publish/lesson/EduLearn.LessonService.dll --urls "http://0.0.0.0:$PORT"
+    env: docker
+    dockerCommand: dotnet EduLearn.LessonService.dll --urls "http://0.0.0.0:$PORT"
     plan: free
     healthCheckPath: /api/lessons/health
     envVars:
@@ -108,9 +104,8 @@ services:
   # PaymentService
   - type: web
     name: edulearn-payment-service
-    env: dotnet
-    buildCommand: dotnet publish EduLearn/src/Services/PaymentService/EduLearn.PaymentService.csproj -c Release -o ./publish/payment
-    startCommand: dotnet ./publish/payment/EduLearn.PaymentService.dll --urls "http://0.0.0.0:$PORT"
+    env: docker
+    dockerCommand: dotnet EduLearn.PaymentService.dll --urls "http://0.0.0.0:$PORT"
     plan: free
     healthCheckPath: /api/payments/health
     envVars:
@@ -137,9 +132,8 @@ services:
   # ProgressService
   - type: web
     name: edulearn-progress-service
-    env: dotnet
-    buildCommand: dotnet publish EduLearn/src/Services/ProgressService/EduLearn.ProgressService.csproj -c Release -o ./publish/progress
-    startCommand: dotnet ./publish/progress/EduLearn.ProgressService.dll --urls "http://0.0.0.0:$PORT"
+    env: docker
+    dockerCommand: dotnet EduLearn.ProgressService.dll --urls "http://0.0.0.0:$PORT"
     plan: free
     healthCheckPath: /api/progress/health
     envVars:
@@ -162,9 +156,8 @@ services:
   # QuizService
   - type: web
     name: edulearn-quiz-service
-    env: dotnet
-    buildCommand: dotnet publish EduLearn/src/Services/QuizService/EduLearn.QuizService.csproj -c Release -o ./publish/quiz
-    startCommand: dotnet ./publish/quiz/EduLearn.QuizService.dll --urls "http://0.0.0.0:$PORT"
+    env: docker
+    dockerCommand: dotnet EduLearn.QuizService.dll --urls "http://0.0.0.0:$PORT"
     plan: free
     healthCheckPath: /api/quizzes/health
     envVars:
@@ -187,9 +180,8 @@ services:
   # ReviewService
   - type: web
     name: edulearn-review-service
-    env: dotnet
-    buildCommand: dotnet publish EduLearn/src/Services/ReviewService/EduLearn.ReviewService.csproj -c Release -o ./publish/review
-    startCommand: dotnet ./publish/review/EduLearn.ReviewService.dll --urls "http://0.0.0.0:$PORT"
+    env: docker
+    dockerCommand: dotnet EduLearn.ReviewService.dll --urls "http://0.0.0.0:$PORT"
     plan: free
     healthCheckPath: /api/reviews/health
     envVars:
