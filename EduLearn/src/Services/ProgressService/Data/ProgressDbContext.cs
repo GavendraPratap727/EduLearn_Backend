@@ -22,14 +22,14 @@ public DbSet<Certificate> Certificates { get; set; }
                 entity.Property(e => e.ProgressId).HasDefaultValueSql("newid()");
                 entity.Property(e => e.IsCompleted).HasDefaultValue(false);
                 entity.Property(e => e.WatchedSeconds).HasDefaultValue(0);
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
 
             modelBuilder.Entity<Certificate>(entity =>
             {
                 entity.HasKey(e => e.CertificateId);
                 entity.HasIndex(e => e.VerificationCode).IsUnique();
-                entity.Property(e => e.IssuedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.IssuedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
                 // Remove the incorrect foreign key constraint
             });
         }

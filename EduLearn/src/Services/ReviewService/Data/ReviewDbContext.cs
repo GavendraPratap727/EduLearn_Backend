@@ -20,7 +20,7 @@ namespace EduLearn.ReviewService.Data
                 entity.HasKey(e => e.ReviewId);
                 entity.Property(e => e.Rating).IsRequired();
                 entity.Property(e => e.IsApproved).HasDefaultValue(false);
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
                 
                 // Unique index on (CourseId, StudentId) to prevent duplicate reviews
                 entity.HasIndex(e => new { e.CourseId, e.StudentId }).IsUnique();
