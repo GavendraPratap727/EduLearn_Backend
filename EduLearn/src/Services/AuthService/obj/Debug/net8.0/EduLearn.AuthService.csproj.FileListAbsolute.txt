@@ -142,3 +142,5 @@ D:\projectCapg\EduLearn_Backend\EduLearn\src\Services\AuthService\obj\Debug\net8
 D:\projectCapg\EduLearn_Backend\EduLearn\src\Services\AuthService\obj\Debug\net8.0\EduLearn.AuthService.pdb
 D:\projectCapg\EduLearn_Backend\EduLearn\src\Services\AuthService\obj\Debug\net8.0\EduLearn.AuthService.genruntimeconfig.cache
 D:\projectCapg\EduLearn_Backend\EduLearn\src\Services\AuthService\obj\Debug\net8.0\ref\EduLearn.AuthService.dll
+D:\projectCapg\EduLearn_Backend\EduLearn\src\Services\AuthService\bin\Debug\net8.0\Npgsql.dll
+D:\projectCapg\EduLearn_Backend\EduLearn\src\Services\AuthService\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll

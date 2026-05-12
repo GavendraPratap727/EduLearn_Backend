@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EduLearn.AuthService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce9d600e9fd90443a99e7dc6937a32ec9afe2104")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+afd29f956d265261c96cdc1fcc229e68477475d7")]
 [assembly: System.Reflection.AssemblyProductAttribute("EduLearn.AuthService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EduLearn.AuthService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

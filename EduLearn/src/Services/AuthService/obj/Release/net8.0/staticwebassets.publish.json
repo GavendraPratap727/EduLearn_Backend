@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "24wzivtbyCqxi3Xb0auHMQa9UpiNXtOs285kyRO/XvE=",
+  "Source": "EduLearn.AuthService",
+  "BasePath": "_content/EduLearn.AuthService",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
