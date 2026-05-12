@@ -16,7 +16,7 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: ConnectionStrings__DefaultConnection
-        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
+        value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -40,7 +40,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
+        value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -64,7 +64,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
+        value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -88,7 +88,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
+        value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -112,7 +112,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
+        value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -140,7 +140,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
+        value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -164,7 +164,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
+        value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -188,7 +188,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
+        value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
