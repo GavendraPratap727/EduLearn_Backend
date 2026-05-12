@@ -15,7 +15,7 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: DefaultConnection
+      - key: ConnectionStrings__DefaultConnection
         value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
@@ -39,7 +39,7 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
+      - key: ConnectionStrings__DefaultConnection
         value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
@@ -63,7 +63,7 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
+      - key: ConnectionStrings__DefaultConnection
         value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
@@ -87,7 +87,7 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
+      - key: ConnectionStrings__DefaultConnection
         value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
@@ -111,7 +111,7 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
+      - key: ConnectionStrings__DefaultConnection
         value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
@@ -139,7 +139,7 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
+      - key: ConnectionStrings__DefaultConnection
         value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
@@ -163,7 +163,7 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
+      - key: ConnectionStrings__DefaultConnection
         value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
@@ -187,7 +187,7 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
+      - key: ConnectionStrings__DefaultConnection
         value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
