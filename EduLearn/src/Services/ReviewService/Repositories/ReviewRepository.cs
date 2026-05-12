@@ -50,15 +50,18 @@ namespace EduLearn.ReviewService.Repositories
 
         public async Task<double> GetAverageRatingAsync(Guid courseId)
         {
-            return await _context.Reviews
-                .Where(r => r.CourseId == courseId && r.IsApproved)
-                .AverageAsync(r => r.Rating);
+            var ratings = _context.Reviews.Where(r => r.CourseId == courseId);
+            if (!await ratings.AnyAsync())
+            {
+                return 0.0;
+            }
+            return await ratings.AverageAsync(r => r.Rating);
         }
 
         public async Task<int> CountByCourseIdAsync(Guid courseId)
         {
             return await _context.Reviews
-                .CountAsync(r => r.CourseId == courseId && r.IsApproved);
+                .CountAsync(r => r.CourseId == courseId);
         }
 
         public async Task<Review> AddAsync(Review review)

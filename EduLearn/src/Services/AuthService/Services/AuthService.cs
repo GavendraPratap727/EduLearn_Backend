@@ -202,6 +202,33 @@ namespace EduLearn.AuthService.Services
             return new AuthResponse(true, "Account reactivated successfully", null, null);
         }
 
+        public async Task<AuthResponse> UpdateUserStatusAsync(Guid userId, bool isActive)
+        {
+            var user = await _userRepository.FindByUserIdAsync(userId);
+            if (user == null)
+            {
+                return new AuthResponse(false, "User not found", null, null);
+            }
+
+            user.IsActive = isActive;
+            await _userRepository.UpdateAsync(user);
+
+            var status = isActive ? "activated" : "deactivated";
+            return new AuthResponse(true, $"Account {status} successfully", null, null);
+        }
+
+        public async Task<AuthResponse> DeleteUserAsync(Guid userId)
+        {
+            var user = await _userRepository.FindByUserIdAsync(userId);
+            if (user == null)
+            {
+                return new AuthResponse(false, "User not found", null, null);
+            }
+
+            await _userRepository.DeleteAsync(user);
+            return new AuthResponse(true, "User deleted successfully", null, null);
+        }
+
         public async Task<List<UserDto>> SearchUsersAsync(string keyword)
         {
             var users = await _userRepository.SearchUsersAsync(keyword);

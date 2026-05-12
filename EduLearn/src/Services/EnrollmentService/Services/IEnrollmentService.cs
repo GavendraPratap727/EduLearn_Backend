@@ -15,5 +15,6 @@ namespace EduLearn.EnrollmentService.Services
         Task<EnrollmentResponse> GetCompletedCoursesAsync(Guid studentId);
         Task<EnrollmentResponse> GetInProgressCoursesAsync(Guid studentId);
         Task<EnrollmentResponse> GetEnrollmentCountAsync(Guid courseId);
+        Task<EnrollmentResponse> DeleteEnrollmentsByCourseAsync(Guid courseId);
     }
 }

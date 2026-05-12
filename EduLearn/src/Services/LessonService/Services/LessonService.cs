@@ -183,7 +183,7 @@ namespace EduLearn.LessonService.Services
 
         public async Task<LessonResponse> GetLessonCountAsync(Guid courseId)
         {
-            var count = await _repository.CountByCourseIdAsync(courseId);
+            var count = await _repository.CountPublishedByCourseIdAsync(courseId);
             return new LessonResponse
             {
                 Success = true,

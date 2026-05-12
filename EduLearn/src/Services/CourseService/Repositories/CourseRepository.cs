@@ -13,6 +13,11 @@ namespace EduLearn.CourseService.Repositories
             _context = context;
         }
 
+        public async Task<List<Course>> GetAllAsync()
+        {
+            return await _context.Courses.ToListAsync();
+        }
+
         public async Task<Course?> FindByCourseIdAsync(Guid courseId)
         {
             return await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId);
@@ -25,7 +30,9 @@ namespace EduLearn.CourseService.Repositories
 
         public async Task<List<Course>> FindByCategoryAsync(string category)
         {
-            return await _context.Courses.Where(c => c.Category == category).ToListAsync();
+            return await _context.Courses
+                .Where(c => c.Category == category && c.IsPublished && c.IsApproved)
+                .ToListAsync();
         }
 
         public async Task<List<Course>> FindPublishedCoursesAsync()
@@ -36,9 +43,15 @@ namespace EduLearn.CourseService.Repositories
         public async Task<List<Course>> SearchCoursesAsync(string keyword)
         {
             return await _context.Courses
-                .Where(c => c.Title.Contains(keyword) || c.Description.Contains(keyword))
+                .Where(c => (c.Title.Contains(keyword) || c.Description.Contains(keyword)) && c.IsPublished && c.IsApproved)
                 .ToListAsync();
         }
+
+        public async Task<List<Course>> FindPendingCoursesAsync()
+        {
+            return await _context.Courses.Where(c => c.IsSubmittedForReview && !c.IsApproved).ToListAsync();
+        }
+
 
         public async Task<List<Course>> FindTopRatedAsync(int limit)
         {

@@ -6,10 +6,12 @@ namespace EduLearn.CourseService.Services
     public class CourseService : ICourseService
     {
         private readonly ICourseRepository _repository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CourseService(ICourseRepository repository)
+        public CourseService(ICourseRepository repository, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<CourseResponse> CreateCourseAsync(CreateCourseRequest request)
@@ -21,12 +23,14 @@ namespace EduLearn.CourseService.Services
                 Description = request.Description,
                 InstructorId = request.InstructorId,
                 Category = request.Category,
-                Level = request.Level,
+                Level = Enum.TryParse<CourseLevel>(request.Level.ToString(), out var parsedLevel) ? parsedLevel : CourseLevel.Beginner,
                 Language = request.Language,
                 Price = request.Price,
                 ThumbnailUrl = request.ThumbnailUrl,
                 IsPublished = false,
                 IsApproved = false,
+                IsSubmittedForReview = false,
+                IsFinished = false,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -44,11 +48,23 @@ namespace EduLearn.CourseService.Services
             var course = await _repository.FindByCourseIdAsync(courseId);
             if (course == null)
             {
-                return new CourseResponse
-                {
-                    Success = false,
-                    Message = "Course not found"
-                };
+                return new CourseResponse { Success = false, Message = "Course not found" };
+            }
+
+            // Check if user is authorized to view this course
+            var currentUserIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userRole = _httpContextAccessor.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            
+            bool isAuthorized = false;
+            if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
+            {
+                isAuthorized = (course.InstructorId == currentUserId || userRole == "ADMIN");
+            }
+
+            // If not authorized, check if course is live
+            if (!isAuthorized && (!course.IsPublished || !course.IsApproved))
+            {
+                return new CourseResponse { Success = false, Message = "Course is not yet available for public viewing" };
             }
 
             return new CourseResponse
@@ -56,6 +72,17 @@ namespace EduLearn.CourseService.Services
                 Success = true,
                 Message = "Course retrieved successfully",
                 Course = MapToCourseDto(course)
+            };
+        }
+        public async Task<CourseResponse> GetAllCoursesAsync()
+        {
+            var allCourses = await _repository.GetAllAsync();
+            var courses = allCourses.Where(c => c.IsPublished && c.IsApproved).ToList();
+            return new CourseResponse
+            {
+                Success = true,
+                Message = "All courses retrieved successfully",
+                Courses = courses.Select(MapToCourseDto).ToList()
             };
         }
 
@@ -124,6 +151,17 @@ namespace EduLearn.CourseService.Services
             course.ThumbnailUrl = request.ThumbnailUrl;
             course.TotalDuration = request.TotalDuration;
 
+            // If an instructor updates a course, it should go back to "In Review" or "Draft"
+            // unless it's already approved (optional choice, but let's be strict)
+            var userRole = _httpContextAccessor.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            if (userRole != "ADMIN")
+            {
+                course.IsPublished = false;
+                course.IsApproved = false;
+                // We keep IsSubmittedForReview as is, or set to false to force re-submission
+                course.IsSubmittedForReview = false; 
+            }
+
             var updatedCourse = await _repository.UpdateAsync(course);
             return new CourseResponse
             {
@@ -138,20 +176,17 @@ namespace EduLearn.CourseService.Services
             var course = await _repository.FindByCourseIdAsync(courseId);
             if (course == null)
             {
-                return new CourseResponse
-                {
-                    Success = false,
-                    Message = "Course not found"
-                };
+                return new CourseResponse { Success = false, Message = "Course not found" };
             }
 
-            course.IsPublished = true;
-            var updatedCourse = await _repository.UpdateAsync(course);
+            course.IsSubmittedForReview = true;
+            course.IsPublished = false;
+            await _repository.UpdateAsync(course);
             return new CourseResponse
             {
                 Success = true,
-                Message = "Course published successfully",
-                Course = MapToCourseDto(updatedCourse)
+                Message = "Course submitted for admin approval",
+                Course = MapToCourseDto(course)
             };
         }
 
@@ -168,6 +203,7 @@ namespace EduLearn.CourseService.Services
             }
 
             course.IsApproved = true;
+            course.IsPublished = true;
             var updatedCourse = await _repository.UpdateAsync(course);
             return new CourseResponse
             {
@@ -177,8 +213,67 @@ namespace EduLearn.CourseService.Services
             };
         }
 
+        public async Task<CourseResponse> RejectCourseAsync(Guid courseId)
+        {
+            var course = await _repository.FindByCourseIdAsync(courseId);
+            if (course == null)
+            {
+                return new CourseResponse
+                {
+                    Success = false,
+                    Message = "Course not found"
+                };
+            }
+
+            course.IsApproved = false;
+            course.IsPublished = false;
+            course.IsSubmittedForReview = false;
+            var updatedCourse = await _repository.UpdateAsync(course);
+            return new CourseResponse
+            {
+                Success = true,
+                Message = "Course rejected successfully",
+                Course = MapToCourseDto(updatedCourse)
+            };
+        }
+
+        public async Task<CourseResponse> FinishCourseAsync(Guid courseId)
+        {
+            var course = await _repository.FindByCourseIdAsync(courseId);
+            if (course == null)
+            {
+                return new CourseResponse
+                {
+                    Success = false,
+                    Message = "Course not found"
+                };
+            }
+
+            course.IsFinished = true;
+            var updatedCourse = await _repository.UpdateAsync(course);
+            return new CourseResponse
+            {
+                Success = true,
+                Message = "Course finished successfully. Students can now earn certificates.",
+                Course = MapToCourseDto(updatedCourse)
+            };
+        }
+
         public async Task<CourseResponse> DeleteCourseAsync(Guid courseId)
         {
+            // Clean up related enrollments before deleting course
+            try
+            {
+                var enrollmentServiceUrl = _httpContextAccessor.HttpContext?.RequestServices?.GetService<IConfiguration>()?["EnrollmentService:Url"] ?? "http://localhost:5003";
+                using var httpClient = new HttpClient();
+                var cleanupResponse = await httpClient.DeleteAsync($"{enrollmentServiceUrl}/api/enrollments/course/{courseId}");
+                // Continue with course deletion even if enrollment cleanup fails
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to clean up enrollments for course {courseId}: {ex.Message}");
+            }
+
             await _repository.DeleteAsync(courseId);
             return new CourseResponse
             {
@@ -197,6 +292,18 @@ namespace EduLearn.CourseService.Services
                 Courses = courses.Select(MapToCourseDto).ToList()
             };
         }
+
+        public async Task<CourseResponse> GetPendingCoursesAsync()
+        {
+            var courses = await _repository.FindPendingCoursesAsync();
+            return new CourseResponse
+            {
+                Success = true,
+                Message = "Pending courses retrieved successfully",
+                Courses = courses.Select(MapToCourseDto).ToList()
+            };
+        }
+
 
         public async Task IncrementEnrollmentAsync(Guid courseId)
         {
@@ -218,6 +325,8 @@ namespace EduLearn.CourseService.Services
                 ThumbnailUrl = course.ThumbnailUrl,
                 IsPublished = course.IsPublished,
                 IsApproved = course.IsApproved,
+                IsSubmittedForReview = course.IsSubmittedForReview,
+                IsFinished = course.IsFinished,
                 CreatedAt = course.CreatedAt,
                 UpdatedAt = course.UpdatedAt,
                 TotalDuration = course.TotalDuration,

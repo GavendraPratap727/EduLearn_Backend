@@ -4,6 +4,8 @@ using System.Net.Http.Json;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace EduLearn.ProgressService.Services
 {
@@ -120,8 +122,10 @@ namespace EduLearn.ProgressService.Services
         {
             var progressList = await _repository.FindByStudentAndCourseAsync(studentId, courseId);
             
-            // Get total lessons from LessonService
-            int totalLessons = 0;
+            int totalItems = 0;
+            int completedItems = 0;
+
+            // 1. Get total lessons from LessonService
             try
             {
                 var lessonServiceUrl = _configuration["LessonService:Url"] ?? "http://localhost:5002";
@@ -129,7 +133,9 @@ namespace EduLearn.ProgressService.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadFromJsonAsync<dynamic>();
-                    totalLessons = result?.count ?? 0;
+                    int totalLessons = result?.count ?? 0;
+                    totalItems += totalLessons;
+                    completedItems += progressList.Count(p => p.IsCompleted);
                 }
             }
             catch (Exception ex)
@@ -137,8 +143,50 @@ namespace EduLearn.ProgressService.Services
                 Console.WriteLine($"Failed to get lesson count: {ex.Message}");
             }
 
-            var completedLessons = progressList.Count(p => p.IsCompleted);
-            var progressPercent = totalLessons > 0 ? (completedLessons * 100) / totalLessons : 0;
+            // 2. Get quizzes from QuizService
+            try
+            {
+                var quizServiceUrl = _configuration["QuizService:Url"] ?? "http://localhost:5005";
+                var response = await _httpClient.GetAsync($"{quizServiceUrl}/api/quizzes/course/{courseId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                    // Access quizzes from the response
+                    var quizzes = result?.quizzes;
+                    if (quizzes != null)
+                    {
+                        foreach (var quiz in quizzes)
+                        {
+                            bool isPublished = quiz.isPublished ?? false;
+                            if (!isPublished) continue;
+
+                            totalItems++;
+                            
+                            // Check if student has a passing attempt for this quiz
+                            Guid quizId = Guid.Parse(quiz.quizId.ToString());
+                            var bestAttemptResponse = await _httpClient.GetAsync($"{quizServiceUrl}/api/quizzes/best-attempt/{studentId}/{quizId}");
+                            if (bestAttemptResponse.IsSuccessStatusCode)
+                            {
+                                var bestAttemptResult = await bestAttemptResponse.Content.ReadFromJsonAsync<dynamic>();
+                                if (bestAttemptResult?.success == true && bestAttemptResult?.attempt != null)
+                                {
+                                    bool isPassed = bestAttemptResult?.attempt?.isPassed ?? false;
+                                    if (isPassed)
+                                    {
+                                        completedItems++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to get quiz progress: {ex.Message}");
+            }
+
+            var progressPercent = totalItems > 0 ? (completedItems * 100) / totalItems : 0;
 
             return new LessonProgressResponse
             {
@@ -351,14 +399,102 @@ namespace EduLearn.ProgressService.Services
 
         private async Task<string> GenerateCertificatePdfAsync(Certificate certificate)
         {
-            // In a real implementation, this would:
-            // 1. Generate PDF using QuestPDF
-            // 2. Upload to Azure Blob Storage
-            // 3. Return SAS URL
+            string studentName = "Learner";
+            string courseTitle = "Course";
 
-            // For now, return a placeholder URL
-            // TODO: Implement actual PDF generation and Azure Blob upload
-            return $"https://edulearn-certificates.blob.core.windows.net/certificates/{certificate.CertificateId}.pdf";
+            // 1. Fetch Student Name from AuthService
+            try
+            {
+                var authServiceUrl = _configuration["AuthService:Url"] ?? "http://localhost:5025";
+                var response = await _httpClient.GetAsync($"{authServiceUrl}/api/auth/users/{certificate.StudentId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                    if (result != null) {
+                        string firstName = result.user?.firstName ?? "";
+                        string lastName = result.user?.lastName ?? "";
+                        studentName = $"{firstName} {lastName}".Trim();
+                        if (string.IsNullOrEmpty(studentName)) studentName = result.user?.username ?? "Learner";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to get student name: {ex.Message}");
+            }
+
+            // 2. Fetch Course Title from CourseService
+            try
+            {
+                var courseServiceUrl = _configuration["CourseService:Url"] ?? "http://localhost:5001";
+                var response = await _httpClient.GetAsync($"{courseServiceUrl}/api/courses/{certificate.CourseId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                    if (result != null) {
+                        courseTitle = result.course?.title ?? "Course";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to get course title: {ex.Message}");
+            }
+
+            // 3. Generate PDF using QuestPDF
+            try
+            {
+                var document = Document.Create(container =>
+                {
+                    container.Page(page =>
+                    {
+                        page.Size(PageSizes.A4.Landscape());
+                        page.Margin(1, Unit.Inch);
+                        page.PageColor(Colors.White);
+                        page.DefaultTextStyle(x => x.FontSize(16));
+
+                        page.Content()
+                            .Border(2)
+                            .Padding(20)
+                            .Column(column =>
+                            {
+                                column.Spacing(20);
+                                column.Item().AlignCenter().Text("EduLearn").FontSize(48).FontColor(Colors.Blue.Medium).SemiBold();
+                                column.Item().AlignCenter().Text("CERTIFICATE OF COMPLETION").FontSize(32).SemiBold();
+                                column.Item().PaddingTop(30).AlignCenter().Text("This is to certify that");
+                                column.Item().AlignCenter().Text(studentName).FontSize(36).Italic().FontColor(Colors.Black);
+                                column.Item().AlignCenter().Text("has successfully completed the course");
+                                column.Item().AlignCenter().Text(courseTitle).FontSize(28).SemiBold().FontColor(Colors.Blue.Darken2);
+                                column.Item().PaddingTop(40).Row(row =>
+                                {
+                                    row.RelativeItem().Column(c => {
+                                        c.Item().Text("EduLearn Academy").SemiBold();
+                                        c.Item().Text("Authorized Signature").FontSize(12);
+                                    });
+                                    row.RelativeItem().AlignRight().Column(c => {
+                                        c.Item().Text($"Issued: {certificate.IssuedAt:MMMM dd, yyyy}").SemiBold();
+                                        c.Item().Text($"ID: {certificate.CertificateId}").FontSize(10);
+                                    });
+                                });
+                                column.Item().PaddingTop(20).AlignCenter().Text($"Verification Code: {certificate.VerificationCode}").FontSize(10).FontColor(Colors.Grey.Medium);
+                            });
+                    });
+                });
+
+                string fileName = $"{certificate.CertificateId}.pdf";
+                string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "certificates");
+                if (!Directory.Exists(wwwrootPath)) Directory.CreateDirectory(wwwrootPath);
+
+                string filePath = Path.Combine(wwwrootPath, fileName);
+                document.GeneratePdf(filePath);
+
+                return $"http://localhost:5004/certificates/{fileName}";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to generate PDF: {ex.Message}");
+                return $"https://edulearn-certificates.blob.core.windows.net/certificates/{certificate.CertificateId}.pdf";
+            }
         }
 
         private CertificateDto MapToCertificateDto(Certificate certificate)

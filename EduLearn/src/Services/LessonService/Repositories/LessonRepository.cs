@@ -44,9 +44,9 @@ namespace EduLearn.LessonService.Repositories
                 .ToListAsync();
         }
 
-        public async Task<int> CountByCourseIdAsync(Guid courseId)
+        public async Task<int> CountPublishedByCourseIdAsync(Guid courseId)
         {
-            return await _context.Lessons.CountAsync(l => l.CourseId == courseId);
+            return await _context.Lessons.CountAsync(l => l.CourseId == courseId && l.IsPublished);
         }
 
         public async Task<Lesson> AddAsync(Lesson lesson)

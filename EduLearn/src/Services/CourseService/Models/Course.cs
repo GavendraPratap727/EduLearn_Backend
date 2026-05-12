@@ -38,6 +38,8 @@ namespace EduLearn.CourseService.Models
         public bool IsPublished { get; set; } = false;
 
         public bool IsApproved { get; set; } = false;
+        public bool IsSubmittedForReview { get; set; } = false;
+        public bool IsFinished { get; set; } = false;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

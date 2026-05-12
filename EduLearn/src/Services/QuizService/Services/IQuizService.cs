@@ -6,7 +6,7 @@ namespace EduLearn.QuizService.Services
     {
         Task<QuizResponse> CreateQuizAsync(CreateQuizRequest request);
         Task<QuizResponse> GetQuizByIdAsync(Guid quizId);
-        Task<QuizResponse> GetQuizzesByCourseAsync(Guid courseId);
+        Task<QuizzesListResponse> GetQuizzesByCourseAsync(Guid courseId);
         Task<QuizResponse> GetQuizByLessonAsync(Guid lessonId);
         Task<QuizResponse> UpdateQuizAsync(Guid quizId, UpdateQuizRequest request);
         Task<QuizResponse> DeleteQuizAsync(Guid quizId);

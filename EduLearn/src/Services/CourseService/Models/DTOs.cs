@@ -15,6 +15,8 @@ namespace EduLearn.CourseService.Models
         public string? ThumbnailUrl { get; set; }
         public bool IsPublished { get; set; }
         public bool IsApproved { get; set; }
+        public bool IsSubmittedForReview { get; set; }
+        public bool IsFinished { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int TotalDuration { get; set; }

@@ -11,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -71,6 +74,17 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Add AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        builder => builder
+            .WithOrigins("http://localhost:4200", "http://localhost:60804")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -80,7 +94,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -189,6 +207,51 @@ app.MapPut("/api/users/{userId}/deactivate", async (Guid userId, IAuthService au
 .WithName("DeactivateAccount")
 .WithOpenApi();
 
+app.MapPut("/api/users/{userId}/status", async (Guid userId, HttpContext context, IAuthService authService) =>
+{
+    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
+    {
+        var userRole = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        if (userRole != "ADMIN")
+        {
+            return Results.Forbid();
+        }
+    }
+    
+    // Read the request body to get isActive status
+    using var reader = new StreamReader(context.Request.Body);
+    var body = await reader.ReadToEndAsync();
+    var requestData = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+    bool isActive = requestData.TryGetValue("isActive", out var isActiveValue) && 
+                   bool.TryParse(isActiveValue.ToString(), out var parsedValue) && parsedValue;
+    
+    var result = await authService.UpdateUserStatusAsync(userId, isActive);
+    return Results.Ok(result);
+})
+.RequireAuthorization("AdminOnly")
+.WithName("UpdateUserStatus")
+.WithOpenApi();
+
+app.MapDelete("/api/users/{userId}", async (Guid userId, HttpContext context, IAuthService authService) =>
+{
+    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
+    {
+        var userRole = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        if (userRole != "ADMIN")
+        {
+            return Results.Forbid();
+        }
+    }
+    
+    var result = await authService.DeleteUserAsync(userId);
+    return Results.Ok(result);
+})
+.RequireAuthorization("AdminOnly")
+.WithName("DeleteUser")
+.WithOpenApi();
+
 app.MapPut("/api/users/{userId}/reactivate", async (Guid userId, IAuthService authService) =>
 {
     var result = await authService.ReactivateAccountAsync(userId);
@@ -196,6 +259,31 @@ app.MapPut("/api/users/{userId}/reactivate", async (Guid userId, IAuthService au
 })
 .RequireAuthorization("AdminOnly")
 .WithName("ReactivateAccount")
+.WithOpenApi();
+
+app.MapGet("/api/users/recent/{limit}", async (int limit, IAuthService authService) =>
+{
+    // Get all users and return the most recent ones
+    var instructors = await authService.GetAllByRoleAsync(UserRoleType.INSTRUCTOR);
+    var students = await authService.GetAllByRoleAsync(UserRoleType.STUDENT);
+    
+    var allUsers = new List<object>();
+    allUsers.AddRange(instructors.Select(u => new { 
+        Id = u.Id, FullName = u.FullName, Email = u.Email, Role = u.Role.ToString(), IsActive = u.IsActive, CreatedAt = u.CreatedAt 
+    }));
+    allUsers.AddRange(students.Select(u => new { 
+        Id = u.Id, FullName = u.FullName, Email = u.Email, Role = u.Role.ToString(), IsActive = u.IsActive, CreatedAt = u.CreatedAt 
+    }));
+    
+    var recentUsers = allUsers
+        .OrderByDescending(u => ((dynamic)u).CreatedAt)
+        .Take(limit)
+        .ToList();
+    
+    return Results.Ok(new { users = recentUsers });
+})
+.RequireAuthorization("AdminOnly")
+.WithName("GetRecentUsers")
 .WithOpenApi();
 
 app.MapGet("/api/users/search/{keyword}", async (string keyword, IAuthService authService) =>

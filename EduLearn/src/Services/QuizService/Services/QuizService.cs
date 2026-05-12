@@ -36,7 +36,7 @@ namespace EduLearn.QuizService.Services
             {
                 Success = true,
                 Message = "Quiz created successfully",
-                Quiz = MapToQuizDto(createdQuiz)
+                Quiz = MapToQuizDetailDto(createdQuiz)
             };
         }
 
@@ -60,19 +60,14 @@ namespace EduLearn.QuizService.Services
             };
         }
 
-        public async Task<QuizResponse> GetQuizzesByCourseAsync(Guid courseId)
+        public async Task<QuizzesListResponse> GetQuizzesByCourseAsync(Guid courseId)
         {
             var quizzes = await _repository.FindByCourseIdListAsync(courseId);
-            return new QuizResponse
+            return new QuizzesListResponse
             {
                 Success = true,
                 Message = $"Found {quizzes.Count} quizzes",
-                Quiz = new QuizDto
-                {
-                    QuizId = Guid.Empty,
-                    CourseId = courseId,
-                    Title = "Multiple Quizzes"
-                }
+                Quizzes = quizzes.Select(MapToQuizDetailDto).ToList()
             };
         }
 
@@ -121,7 +116,7 @@ namespace EduLearn.QuizService.Services
             {
                 Success = true,
                 Message = "Quiz updated successfully",
-                Quiz = MapToQuizDto(updatedQuiz)
+                Quiz = MapToQuizDetailDto(updatedQuiz)
             };
         }
 
@@ -165,7 +160,7 @@ namespace EduLearn.QuizService.Services
             {
                 Success = true,
                 Message = "Quiz published successfully",
-                Quiz = MapToQuizDto(updatedQuiz)
+                Quiz = MapToQuizDetailDto(updatedQuiz)
             };
         }
 

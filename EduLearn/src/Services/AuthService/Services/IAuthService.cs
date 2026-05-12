@@ -15,6 +15,8 @@ namespace EduLearn.AuthService.Services
         Task<List<UserDto>> GetAllByRoleAsync(UserRoleType role);
         Task<AuthResponse> DeactivateAccountAsync(Guid userId);
         Task<AuthResponse> ReactivateAccountAsync(Guid userId);
+        Task<AuthResponse> UpdateUserStatusAsync(Guid userId, bool isActive);
+        Task<AuthResponse> DeleteUserAsync(Guid userId);
         Task<List<UserDto>> SearchUsersAsync(string keyword);
     }
 }

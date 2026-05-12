@@ -11,16 +11,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy("AllowFrontend",
+        builder => builder
+            .WithOrigins("http://localhost:4200", "http://localhost:60804")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 builder.Services.AddSwaggerGen(options =>
 {
@@ -94,8 +97,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseCors();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -236,5 +242,13 @@ app.MapGet("/api/reviews/hasReviewed/{studentId}/{courseId}", async (Guid studen
 .RequireAuthorization("Authenticated")
 .WithName("HasStudentReviewed")
 .WithOpenApi();
+
+// Simple endpoint to check database (for debugging)
+app.MapGet("/debug/check-reviews", () =>
+{
+    CheckReviews.CheckAllReviews();
+    return Results.Ok("Review check completed. Check console output.");
+})
+.WithName("CheckReviews");
 
 app.Run();

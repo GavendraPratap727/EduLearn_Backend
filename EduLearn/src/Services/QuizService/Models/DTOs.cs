@@ -40,7 +40,7 @@ namespace EduLearn.QuizService.Models
     {
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
-        public QuizDto? Quiz { get; set; }
+        public QuizDetailDto? Quiz { get; set; }
     }
 
     public class QuizDto
@@ -93,5 +93,12 @@ namespace EduLearn.QuizService.Models
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
         public int Count { get; set; }
+    }
+
+    public class QuizzesListResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public List<QuizDetailDto> Quizzes { get; set; } = new();
     }
 }

@@ -12,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -75,7 +79,27 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 // Add Authorization Helper
 builder.Services.AddScoped<JwtAuthorizationHelper>();
 
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        builder => builder
+            .WithOrigins("http://localhost:4200", "http://localhost:60804")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
 var app = builder.Build();
+
+// Initialize database
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
+    dbContext.Database.EnsureCreated();
+    SeedData.Initialize(dbContext);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -84,18 +108,81 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Course endpoints
-app.MapPost("/api/courses", async (CreateCourseRequest request, ICourseService courseService) =>
+app.MapGet("/api/courses", async (ICourseService courseService) =>
 {
-    var result = await courseService.CreateCourseAsync(request);
+    var result = await courseService.GetAllCoursesAsync();
     return Results.Ok(result);
+})
+.WithName("GetAllCourses")
+.WithOpenApi();
+
+app.MapPost("/api/courses", async (CreateCourseRequest request, HttpContext context, ICourseService courseService) =>
+{
+    try
+    {
+        var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (Guid.TryParse(currentUserIdClaim, out Guid instructorId))
+        {
+            // Force the instructor ID to be the current user's ID
+            request.InstructorId = instructorId;
+        }
+        
+        var result = await courseService.CreateCourseAsync(request);
+        return Results.Ok(result);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error creating course: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        return Results.Problem($"Error creating course: {ex.Message}");
+    }
 })
 .RequireAuthorization("InstructorOrAdmin")
 .WithName("CreateCourse")
+.WithOpenApi();
+
+
+
+app.MapGet("/api/courses/pending", async (ICourseService courseService) =>
+{
+    var result = await courseService.GetPendingCoursesAsync();
+    return Results.Ok(result);
+})
+.RequireAuthorization("Authenticated")
+.WithName("GetPendingCourses")
+.WithOpenApi();
+
+app.MapGet("/api/courses/published", async (ICourseService courseService) =>
+{
+    var result = await courseService.GetPublishedCoursesAsync();
+    return Results.Ok(result);
+})
+.WithName("GetPublishedCourses")
+.WithOpenApi();
+
+app.MapGet("/api/courses/top-rated", async (int limit, ICourseService courseService) =>
+{
+    var result = await courseService.GetTopRatedCoursesAsync(limit);
+    return Results.Ok(result);
+})
+.WithName("GetTopRatedCourses")
+.WithOpenApi();
+
+app.MapGet("/api/courses/search", async (string keyword, ICourseService courseService) =>
+{
+    var result = await courseService.SearchCoursesAsync(keyword);
+    return Results.Ok(result);
+})
+.WithName("SearchCourses")
 .WithOpenApi();
 
 app.MapGet("/api/courses/{id}", async (Guid id, ICourseService courseService) =>
@@ -133,21 +220,7 @@ app.MapGet("/api/courses/category/{category}", async (string category, ICourseSe
 .WithName("GetCoursesByCategory")
 .WithOpenApi();
 
-app.MapGet("/api/courses/published", async (ICourseService courseService) =>
-{
-    var result = await courseService.GetPublishedCoursesAsync();
-    return Results.Ok(result);
-})
-.WithName("GetPublishedCourses")
-.WithOpenApi();
 
-app.MapGet("/api/courses/search", async (string keyword, ICourseService courseService) =>
-{
-    var result = await courseService.SearchCoursesAsync(keyword);
-    return Results.Ok(result);
-})
-.WithName("SearchCourses")
-.WithOpenApi();
 
 app.MapPut("/api/courses/{id}", async (Guid id, UpdateCourseRequest request, HttpContext context, ICourseService courseService) =>
 {
@@ -189,6 +262,26 @@ app.MapPut("/api/courses/{id}/publish", async (Guid id, HttpContext context, ICo
 .WithName("PublishCourse")
 .WithOpenApi();
 
+app.MapPut("/api/courses/{id}/finish", async (Guid id, HttpContext context, ICourseService courseService) =>
+{
+    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    if (Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
+    {
+        // Instructors can only finish their own courses, Admins can finish any
+        var userRole = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        var course = await courseService.GetCourseByIdAsync(id);
+        if (course.Success && userRole != "ADMIN" && course.Course?.InstructorId != currentUserId)
+        {
+            return Results.Forbid();
+        }
+    }
+    var result = await courseService.FinishCourseAsync(id);
+    return result.Success ? Results.Ok(result) : Results.NotFound(result);
+})
+.RequireAuthorization("InstructorOrAdmin")
+.WithName("FinishCourse")
+.WithOpenApi();
+
 app.MapPut("/api/courses/{id}/approve", async (Guid id, ICourseService courseService) =>
 {
     var result = await courseService.ApproveCourseAsync(id);
@@ -196,6 +289,15 @@ app.MapPut("/api/courses/{id}/approve", async (Guid id, ICourseService courseSer
 })
 .RequireAuthorization("AdminOnly")
 .WithName("ApproveCourse")
+.WithOpenApi();
+
+app.MapPut("/api/courses/{id}/reject", async (Guid id, ICourseService courseService) =>
+{
+    var result = await courseService.RejectCourseAsync(id);
+    return result.Success ? Results.Ok(result) : Results.NotFound(result);
+})
+.RequireAuthorization("AdminOnly")
+.WithName("RejectCourse")
 .WithOpenApi();
 
 app.MapDelete("/api/courses/{id}", async (Guid id, HttpContext context, ICourseService courseService) =>
@@ -218,13 +320,8 @@ app.MapDelete("/api/courses/{id}", async (Guid id, HttpContext context, ICourseS
 .WithName("DeleteCourse")
 .WithOpenApi();
 
-app.MapGet("/api/courses/top-rated", async (int limit, ICourseService courseService) =>
-{
-    var result = await courseService.GetTopRatedCoursesAsync(limit);
-    return Results.Ok(result);
-})
-.WithName("GetTopRatedCourses")
-.WithOpenApi();
+
+
 
 app.MapPost("/api/courses/{id}/increment-enrollment", async (Guid id, ICourseService courseService) =>
 {

@@ -229,6 +229,24 @@ namespace EduLearn.EnrollmentService.Services
             };
         }
 
+        public async Task<EnrollmentResponse> DeleteEnrollmentsByCourseAsync(Guid courseId)
+        {
+            var enrollments = await _repository.FindByCourseIdAsync(courseId);
+            if (enrollments.Any())
+            {
+                foreach (var enrollment in enrollments)
+                {
+                    await _repository.DeleteAsync(enrollment.EnrollmentId);
+                }
+            }
+            
+            return new EnrollmentResponse
+            {
+                Success = true,
+                Message = "All enrollments for the course deleted successfully"
+            };
+        }
+
         private EnrollmentDto MapToEnrollmentDto(Enrollment enrollment)
         {
             return new EnrollmentDto

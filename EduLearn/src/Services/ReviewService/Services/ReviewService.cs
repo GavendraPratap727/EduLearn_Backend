@@ -45,7 +45,7 @@ namespace EduLearn.ReviewService.Services
                 StudentId = studentId,
                 Rating = request.Rating,
                 Comment = request.Comment,
-                IsApproved = false,
+                IsApproved = true,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -54,7 +54,7 @@ namespace EduLearn.ReviewService.Services
             return new ReviewResponse
             {
                 Success = true,
-                Message = "Review submitted successfully. It will be visible after approval.",
+                Message = "Review submitted successfully and is now visible!",
                 Review = MapToReviewDto(createdReview)
             };
         }
@@ -225,8 +225,13 @@ namespace EduLearn.ReviewService.Services
 
         public async Task<AverageRatingResponse> GetAverageRatingAsync(Guid courseId)
         {
+            Console.WriteLine($"=== GetAverageRatingAsync called for CourseId: {courseId} ===");
+            
             var averageRating = await _repository.GetAverageRatingAsync(courseId);
             var reviewCount = await _repository.CountByCourseIdAsync(courseId);
+            
+            Console.WriteLine($"Average rating: {averageRating}");
+            Console.WriteLine($"Review count: {reviewCount}");
 
             return new AverageRatingResponse
             {

@@ -4,6 +4,7 @@ namespace EduLearn.CourseService.Repositories
 {
     public interface ICourseRepository
     {
+        Task<List<Course>> GetAllAsync();
         Task<Course?> FindByCourseIdAsync(Guid courseId);
         Task<List<Course>> FindByInstructorIdAsync(Guid instructorId);
         Task<List<Course>> FindByCategoryAsync(string category);
@@ -14,6 +15,7 @@ namespace EduLearn.CourseService.Repositories
         Task<Course> AddAsync(Course course);
         Task<Course> UpdateAsync(Course course);
         Task DeleteAsync(Guid courseId);
+        Task<List<Course>> FindPendingCoursesAsync();
         Task IncrementEnrollmentAsync(Guid courseId);
     }
 }

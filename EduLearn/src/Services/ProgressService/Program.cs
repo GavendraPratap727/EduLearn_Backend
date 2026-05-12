@@ -11,16 +11,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy("AllowFrontend",
+        builder => builder
+            .WithOrigins("http://localhost:4200", "http://localhost:60804")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 builder.Services.AddSwaggerGen(options =>
 {
@@ -94,8 +97,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseCors();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+app.UseStaticFiles();
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -200,6 +207,46 @@ app.MapPut("/api/progress/{id}/complete", async (Guid id, IProgressService progr
 })
 .RequireAuthorization("Authenticated")
 .WithName("MarkLessonComplete")
+.WithOpenApi();
+
+app.MapPost("/api/progress/lesson/{lessonId}/complete", async (Guid lessonId, [Microsoft.AspNetCore.Mvc.FromQuery] Guid courseId, HttpContext context, IProgressService progressService) =>
+{
+    var currentUserIdClaim = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+    if (!Guid.TryParse(currentUserIdClaim, out Guid studentId))
+    {
+        return Results.Unauthorized();
+    }
+
+    // Try to find existing progress
+    var progressResult = await progressService.GetProgressByStudentAndLessonAsync(studentId, lessonId);
+    Guid progressId;
+
+    if (progressResult.Success && progressResult.Progress != null)
+    {
+        progressId = progressResult.Progress.ProgressId;
+    }
+    else
+    {
+        // Create new progress record
+        var createResult = await progressService.CreateProgressAsync(new CreateLessonProgressRequest
+        {
+            StudentId = studentId,
+            CourseId = courseId,
+            LessonId = lessonId
+        });
+
+        if (!createResult.Success || createResult.Progress == null)
+        {
+            return Results.BadRequest(createResult);
+        }
+        progressId = createResult.Progress.ProgressId;
+    }
+
+    var result = await progressService.MarkLessonCompleteAsync(progressId);
+    return result.Success ? Results.Ok(result) : Results.NotFound(result);
+})
+.RequireAuthorization("Authenticated")
+.WithName("MarkLessonCompleteByLessonId")
 .WithOpenApi();
 
 app.MapGet("/api/progress/stats/{id}", async (Guid id, HttpContext context, IProgressService progressService) =>

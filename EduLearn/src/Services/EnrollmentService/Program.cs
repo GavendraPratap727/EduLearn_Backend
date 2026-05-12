@@ -11,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -74,6 +77,18 @@ builder.Services.AddHttpClient<IEnrollmentService, EnrollmentService>();
 // Add Service
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        builder => builder
+            .WithOrigins("http://localhost:4200", "http://localhost:60804")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
 var app = builder.Build();
 
 // Create database if it doesn't exist
@@ -90,13 +105,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Enrollment endpoints
-app.MapPost("/api/enrollments", async (CreateEnrollmentRequest request, IEnrollmentService enrollmentService) =>
+app.MapPost("/api/enrollments", async (HttpContext context, CreateEnrollmentRequest request, IEnrollmentService enrollmentService) =>
 {
+    var currentUserIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    if (!Guid.TryParse(currentUserIdClaim, out Guid studentId))
+    {
+        return Results.Unauthorized();
+    }
+
+    request.StudentId = studentId;
     var result = await enrollmentService.EnrollAsync(request);
     return Results.Ok(result);
 })
@@ -222,6 +248,15 @@ app.MapGet("/api/enrollments/course/{id}/count", async (Guid id, IEnrollmentServ
 })
 .RequireAuthorization("InstructorOrAdmin")
 .WithName("GetEnrollmentCount")
+.WithOpenApi();
+
+app.MapDelete("/api/enrollments/course/{id}", async (Guid id, IEnrollmentService enrollmentService) =>
+{
+    var result = await enrollmentService.DeleteEnrollmentsByCourseAsync(id);
+    return Results.Ok(result);
+})
+.RequireAuthorization("InstructorOrAdmin")
+.WithName("DeleteEnrollmentsByCourse")
 .WithOpenApi();
 
 app.Run();

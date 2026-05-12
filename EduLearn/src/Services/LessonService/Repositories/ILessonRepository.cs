@@ -9,7 +9,7 @@ namespace EduLearn.LessonService.Repositories
         Task<List<Lesson>> FindByCourseIdOrderByDisplayOrderAsync(Guid courseId);
         Task<List<Lesson>> FindByContentTypeAsync(ContentType contentType);
         Task<List<Lesson>> FindPreviewLessonsAsync(Guid courseId);
-        Task<int> CountByCourseIdAsync(Guid courseId);
+        Task<int> CountPublishedByCourseIdAsync(Guid courseId);
         Task<Lesson> AddAsync(Lesson lesson);
         Task<Lesson> UpdateAsync(Lesson lesson);
         Task DeleteAsync(Guid lessonId);

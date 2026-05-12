@@ -6,6 +6,7 @@ namespace EduLearn.CourseService.Services
     {
         Task<CourseResponse> CreateCourseAsync(CreateCourseRequest request);
         Task<CourseResponse> GetCourseByIdAsync(Guid courseId);
+        Task<CourseResponse> GetAllCoursesAsync();
         Task<CourseResponse> GetCoursesByInstructorAsync(Guid instructorId);
         Task<CourseResponse> GetCoursesByCategoryAsync(string category);
         Task<CourseResponse> GetPublishedCoursesAsync();
@@ -13,8 +14,11 @@ namespace EduLearn.CourseService.Services
         Task<CourseResponse> UpdateCourseAsync(Guid courseId, UpdateCourseRequest request);
         Task<CourseResponse> PublishCourseAsync(Guid courseId);
         Task<CourseResponse> ApproveCourseAsync(Guid courseId);
+        Task<CourseResponse> RejectCourseAsync(Guid courseId);
+        Task<CourseResponse> FinishCourseAsync(Guid courseId);
         Task<CourseResponse> DeleteCourseAsync(Guid courseId);
         Task<CourseResponse> GetTopRatedCoursesAsync(int limit);
+        Task<CourseResponse> GetPendingCoursesAsync();
         Task IncrementEnrollmentAsync(Guid courseId);
     }
 }

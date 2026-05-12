@@ -384,16 +384,21 @@ namespace EduLearn.PaymentService.Services
                 {
                     StudentId = studentId,
                     Name = "Student User",
-                    Email = "student@example.com",
+                    Email = $"student_{studentId:N}@edulearn.com",
                     CreatedAt = DateTime.UtcNow
                 };
 
                 _context.Students.Add(newStudent);
                 await _context.SaveChangesAsync();
             }
-            catch
+            catch (Exception ex)
             {
-                // Log error but don't fail the payment creation
+                // Detach the failed entity to avoid poisoning the context
+                var entry = _context.ChangeTracker.Entries<Student>().FirstOrDefault(e => e.Entity.StudentId == studentId);
+                if (entry != null)
+                {
+                    entry.State = EntityState.Detached;
+                }
             }
         }
 
@@ -412,7 +417,7 @@ namespace EduLearn.PaymentService.Services
                 var newCourse = new Course
                 {
                     CourseId = courseId,
-                    Title = "Sample Course",
+                    Title = $"Course {courseId.ToString().Substring(0, 8)}",
                     Price = 999, // Default price
                     IsPaid = true,
                     CreatedAt = DateTime.UtcNow
@@ -425,6 +430,12 @@ namespace EduLearn.PaymentService.Services
             }
             catch
             {
+                // Detach the failed entity to avoid poisoning the context
+                var entry = _context.ChangeTracker.Entries<Course>().FirstOrDefault(e => e.Entity.CourseId == courseId);
+                if (entry != null)
+                {
+                    entry.State = EntityState.Detached;
+                }
                 return null;
             }
         }
