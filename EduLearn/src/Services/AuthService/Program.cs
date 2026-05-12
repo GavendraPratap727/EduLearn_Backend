@@ -79,7 +79,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         builder => builder
-            .WithOrigins("http://localhost:4200", "http://localhost:60804")
+            .WithOrigins(
+                "http://localhost:4200", 
+                "http://localhost:60804",
+                "https://edulearn-frontend.onrender.com", // Add your frontend Render URL
+                "https://your-frontend-domain.com" // Replace with your actual frontend domain
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -301,6 +306,14 @@ app.MapPost("/api/auth/validate", async (string token, IAuthService authService)
     return Results.Ok(result);
 })
 .WithName("ValidateToken")
+.WithOpenApi();
+
+// Health check endpoint
+app.MapGet("/api/auth/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "AuthService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
 .WithOpenApi();
 
 app.Run();
