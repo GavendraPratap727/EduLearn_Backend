@@ -1,0 +1,65 @@
+# .NET build artifacts
+**/[Oo]bj/
+**/[Bb]in/
+**/*.user
+**/*.suo
+**/*.cache
+**/*.cache
+**/*.user
+**/*.log
+**/*.dll
+**/*.exe
+**/*.pdb
+**/*.json
+
+# Visual Studio files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+
+# NuGet packages
+*.nupkg
+packages/
+
+# Testing
+**/TestResults/
+**/Coverage/
+
+# Git files
+.git/
+.gitignore
+README.md
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Local configuration files
+appsettings.Development.json
+appsettings.Local.json
+*.pfx
+*.key

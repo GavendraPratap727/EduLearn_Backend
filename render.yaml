@@ -1,0 +1,130 @@
+services:
+  # AuthService
+  - type: web
+    name: EduLearn-AuthService
+    env: docker
+    repo: https://github.com/GavendraPratap727/EduLearn_Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/auth/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Jwt__SecretKey
+        generateValue: true
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_auth;User Id=postgres;Password=postgres;
+    autoDeploy: true
+
+  # CourseService
+  - type: web
+    name: EduLearn-CourseService
+    env: docker
+    repo: https://github.com/GavendraPratap727/EduLearn_Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/courses/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_courses;User Id=postgres;Password=postgres;
+    autoDeploy: true
+
+  # EnrollmentService
+  - type: web
+    name: EduLearn-EnrollmentService
+    env: docker
+    repo: https://github.com/GavendraPratap727/EduLearn_Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/enrollments/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_enrollments;User Id=postgres;Password=postgres;
+    autoDeploy: true
+
+  # LessonService
+  - type: web
+    name: EduLearn-LessonService
+    env: docker
+    repo: https://github.com/GavendraPratap727/EduLearn_Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/lessons/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_lessons;User Id=postgres;Password=postgres;
+    autoDeploy: true
+
+  # PaymentService
+  - type: web
+    name: EduLearn-PaymentService
+    env: docker
+    repo: https://github.com/GavendraPratap727/EduLearn_Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/payments/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_payments;User Id=postgres;Password=postgres;
+      - key: Razorpay__KeyId
+        sync: false # You'll need to set this manually
+      - key: Razorpay__KeySecret
+        sync: false # You'll need to set this manually
+    autoDeploy: true
+
+  # ProgressService
+  - type: web
+    name: EduLearn-ProgressService
+    env: docker
+    repo: https://github.com/GavendraPratap727/EduLearn_Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/progress/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_progress;User Id=postgres;Password=postgres;
+    autoDeploy: true
+
+  # QuizService
+  - type: web
+    name: EduLearn-QuizService
+    env: docker
+    repo: https://github.com/GavendraPratap727/EduLearn_Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/quizzes/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_quizzes;User Id=postgres;Password=postgres;
+    autoDeploy: true
+
+  # ReviewService
+  - type: web
+    name: EduLearn-ReviewService
+    env: docker
+    repo: https://github.com/GavendraPratap727/EduLearn_Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/reviews/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_reviews;User Id=postgres;Password=postgres;
+    autoDeploy: true

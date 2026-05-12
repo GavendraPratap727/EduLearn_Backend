@@ -1,0 +1,33 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\certificates\\74674E50B31F45D381C7D9831FF4EF43.pdf",
+      "PackagePath": "staticwebassets\\certificates\\74674E50B31F45D381C7D9831FF4EF43.pdf"
+    },
+    {
+      "Id": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\certificates\\76D9F47096ED40138BFC52A7E271C2FF.pdf",
+      "PackagePath": "staticwebassets\\certificates\\76D9F47096ED40138BFC52A7E271C2FF.pdf"
+    },
+    {
+      "Id": "D:\\projectCapg\\EduLearn_Backend\\EduLearn\\src\\Services\\ProgressService\\wwwroot\\certificates\\B1C958C71B8F4AA9B2A2325C7523B99B.pdf",
+      "PackagePath": "staticwebassets\\certificates\\B1C958C71B8F4AA9B2A2325C7523B99B.pdf"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.EduLearn.ProgressService.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.EduLearn.ProgressService.props",
+      "PackagePath": "build\\EduLearn.ProgressService.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.EduLearn.ProgressService.props",
+      "PackagePath": "buildMultiTargeting\\EduLearn.ProgressService.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.EduLearn.ProgressService.props",
+      "PackagePath": "buildTransitive\\EduLearn.ProgressService.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

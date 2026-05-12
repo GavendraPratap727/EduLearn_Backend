@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "WQ07H7J8on7NPq1IjhMKO1jyarpxa6NAgNdS9vOzXJY=",
+  "Source": "EduLearn.QuizService",
+  "BasePath": "_content/EduLearn.QuizService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
