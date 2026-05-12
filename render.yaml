@@ -3,7 +3,7 @@ services:
   - type: web
     name: edulearn-auth-service
     env: docker
-    dockerCommand: dotnet EduLearn.AuthService.dll --urls http://0.0.0.0:$PORT
+    dockerCommand: dotnet ./auth/EduLearn.AuthService.dll --urls http://0.0.0.0:$PORT
     plan: free
     healthCheckPath: /api/auth/health
     envVars:
@@ -33,7 +33,7 @@ services:
   - type: web
     name: edulearn-course-service
     env: docker
-    dockerCommand: dotnet EduLearn.CourseService.dll --urls http://0.0.0.0:$PORT
+    dockerCommand: dotnet ./course/EduLearn.CourseService.dll --urls http://0.0.0.0:$PORT
     plan: free
     healthCheckPath: /api/courses/health
     envVars:
@@ -57,7 +57,7 @@ services:
   - type: web
     name: edulearn-enrollment-service
     env: docker
-    dockerCommand: dotnet EduLearn.EnrollmentService.dll --urls http://0.0.0.0:$PORT
+    dockerCommand: dotnet ./enrollment/EduLearn.EnrollmentService.dll --urls http://0.0.0.0:$PORT
     plan: free
     healthCheckPath: /api/enrollments/health
     envVars:
@@ -81,7 +81,7 @@ services:
   - type: web
     name: edulearn-lesson-service
     env: docker
-    dockerCommand: dotnet EduLearn.LessonService.dll --urls http://0.0.0.0:$PORT
+    dockerCommand: dotnet ./lesson/EduLearn.LessonService.dll --urls http://0.0.0.0:$PORT
     plan: free
     healthCheckPath: /api/lessons/health
     envVars:
@@ -105,7 +105,7 @@ services:
   - type: web
     name: edulearn-payment-service
     env: docker
-    dockerCommand: dotnet EduLearn.PaymentService.dll --urls http://0.0.0.0:$PORT
+    dockerCommand: dotnet ./payment/EduLearn.PaymentService.dll --urls http://0.0.0.0:$PORT
     plan: free
     healthCheckPath: /api/payments/health
     envVars:
@@ -133,7 +133,7 @@ services:
   - type: web
     name: edulearn-progress-service
     env: docker
-    dockerCommand: dotnet EduLearn.ProgressService.dll --urls http://0.0.0.0:$PORT
+    dockerCommand: dotnet ./progress/EduLearn.ProgressService.dll --urls http://0.0.0.0:$PORT
     plan: free
     healthCheckPath: /api/progress/health
     envVars:
@@ -157,7 +157,7 @@ services:
   - type: web
     name: edulearn-quiz-service
     env: docker
-    dockerCommand: dotnet EduLearn.QuizService.dll --urls http://0.0.0.0:$PORT
+    dockerCommand: dotnet ./quiz/EduLearn.QuizService.dll --urls http://0.0.0.0:$PORT
     plan: free
     healthCheckPath: /api/quizzes/health
     envVars:
@@ -181,7 +181,7 @@ services:
   - type: web
     name: edulearn-review-service
     env: docker
-    dockerCommand: dotnet EduLearn.ReviewService.dll --urls http://0.0.0.0:$PORT
+    dockerCommand: dotnet ./review/EduLearn.ReviewService.dll --urls http://0.0.0.0:$PORT
     plan: free
     healthCheckPath: /api/reviews/health
     envVars:
