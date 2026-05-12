@@ -249,12 +249,6 @@ app.MapGet("/api/reviews/hasReviewed/{studentId}/{courseId}", async (Guid studen
 .WithName("HasStudentReviewed")
 .WithOpenApi();
 
-// Simple endpoint to check database (for debugging)
-app.MapGet("/debug/check-reviews", () =>
-{
-    CheckReviews.CheckAllReviews();
-    return Results.Ok("Review check completed. Check console output.");
-})
-.WithName("CheckReviews");
+// Database check endpoint removed for production fix
 
 app.Run();
