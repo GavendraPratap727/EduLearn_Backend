@@ -17,7 +17,7 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DefaultConnection
-        value: Server=postgres;Database=edulearn_auth;User Id=postgres;Password=postgres;
+        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -42,7 +42,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: DefaultConnection
-        value: Server=postgres;Database=edulearn_courses;User Id=postgres;Password=postgres;
+        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -67,7 +67,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: DefaultConnection
-        value: Server=postgres;Database=edulearn_enrollments;User Id=postgres;Password=postgres;
+        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -92,7 +92,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: DefaultConnection
-        value: Server=postgres;Database=edulearn_lessons;User Id=postgres;Password=postgres;
+        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -117,7 +117,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: DefaultConnection
-        value: Server=postgres;Database=edulearn_payments;User Id=postgres;Password=postgres;
+        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -146,7 +146,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: DefaultConnection
-        value: Server=postgres;Database=edulearn_progress;User Id=postgres;Password=postgres;
+        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -171,7 +171,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: DefaultConnection
-        value: Server=postgres;Database=edulearn_quizzes;User Id=postgres;Password=postgres;
+        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -196,7 +196,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: DefaultConnection
-        value: Server=postgres;Database=edulearn_reviews;User Id=postgres;Password=postgres;
+        value: postgresql://edulearn_rdal_user:Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW@dpg-d81pf3gg4nts738b096g-a/edulearn_rdal
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
