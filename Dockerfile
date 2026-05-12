@@ -42,5 +42,5 @@ COPY --from=publish /app/publish .
 COPY ["start-services.sh", "./"]
 RUN chmod +x "./start-services.sh"
 
-# Set the entry point to the startup script
-ENTRYPOINT ["./start-services.sh"]
+# Set the default command to the startup script
+CMD ["./start-services.sh"]
