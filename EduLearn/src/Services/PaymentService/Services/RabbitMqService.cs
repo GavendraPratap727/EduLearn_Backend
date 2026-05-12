@@ -16,7 +16,7 @@ namespace EduLearn.PaymentService.Services
     public class RabbitMqService : IRabbitMqService, IDisposable
     {
         private readonly IConnection _connection;
-        private readonly IModel _channel;
+        private readonly IChannel _channel;
         private readonly ILogger<RabbitMqService> _logger;
 
         public RabbitMqService(IConfiguration configuration, ILogger<RabbitMqService> logger)
