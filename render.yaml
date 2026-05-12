@@ -1,72 +1,210 @@
 services:
+  # AuthService
   - type: web
     name: edulearn-auth-service
     env: dotnet
     buildCommand: dotnet publish EduLearn/src/Services/AuthService/EduLearn.AuthService.csproj -c Release -o ./publish/auth
     startCommand: dotnet ./publish/auth/EduLearn.AuthService.dll --urls "http://0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: /api/auth/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        generateValue: true
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_auth;User Id=postgres;Password=postgres;
+      - key: RabbitMQ__HostName
+        value: gerbil.rmq.cloudamqp.com
+      - key: RabbitMQ__Port
+        value: 5672
+      - key: RabbitMQ__UserName
+        value: dwnjeedx
+      - key: RabbitMQ__Password
+        value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
+      - key: RabbitMQ__VirtualHost
+        value: dwnjeedx
+    autoDeploy: true
 
+  # CourseService
   - type: web
     name: edulearn-course-service
     env: dotnet
     buildCommand: dotnet publish EduLearn/src/Services/CourseService/EduLearn.CourseService.csproj -c Release -o ./publish/course
     startCommand: dotnet ./publish/course/EduLearn.CourseService.dll --urls "http://0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: /api/courses/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_courses;User Id=postgres;Password=postgres;
+      - key: RabbitMQ__HostName
+        value: gerbil.rmq.cloudamqp.com
+      - key: RabbitMQ__Port
+        value: 5672
+      - key: RabbitMQ__UserName
+        value: dwnjeedx
+      - key: RabbitMQ__Password
+        value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
+      - key: RabbitMQ__VirtualHost
+        value: dwnjeedx
+    autoDeploy: true
 
+  # EnrollmentService
   - type: web
     name: edulearn-enrollment-service
     env: dotnet
     buildCommand: dotnet publish EduLearn/src/Services/EnrollmentService/EduLearn.EnrollmentService.csproj -c Release -o ./publish/enrollment
     startCommand: dotnet ./publish/enrollment/EduLearn.EnrollmentService.dll --urls "http://0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: /api/enrollments/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_enrollments;User Id=postgres;Password=postgres;
+      - key: RabbitMQ__HostName
+        value: gerbil.rmq.cloudamqp.com
+      - key: RabbitMQ__Port
+        value: 5672
+      - key: RabbitMQ__UserName
+        value: dwnjeedx
+      - key: RabbitMQ__Password
+        value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
+      - key: RabbitMQ__VirtualHost
+        value: dwnjeedx
+    autoDeploy: true
 
+  # LessonService
   - type: web
     name: edulearn-lesson-service
     env: dotnet
     buildCommand: dotnet publish EduLearn/src/Services/LessonService/EduLearn.LessonService.csproj -c Release -o ./publish/lesson
     startCommand: dotnet ./publish/lesson/EduLearn.LessonService.dll --urls "http://0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: /api/lessons/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_lessons;User Id=postgres;Password=postgres;
+      - key: RabbitMQ__HostName
+        value: gerbil.rmq.cloudamqp.com
+      - key: RabbitMQ__Port
+        value: 5672
+      - key: RabbitMQ__UserName
+        value: dwnjeedx
+      - key: RabbitMQ__Password
+        value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
+      - key: RabbitMQ__VirtualHost
+        value: dwnjeedx
+    autoDeploy: true
 
+  # PaymentService
   - type: web
     name: edulearn-payment-service
     env: dotnet
     buildCommand: dotnet publish EduLearn/src/Services/PaymentService/EduLearn.PaymentService.csproj -c Release -o ./publish/payment
     startCommand: dotnet ./publish/payment/EduLearn.PaymentService.dll --urls "http://0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: /api/payments/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_payments;User Id=postgres;Password=postgres;
+      - key: RabbitMQ__HostName
+        value: gerbil.rmq.cloudamqp.com
+      - key: RabbitMQ__Port
+        value: 5672
+      - key: RabbitMQ__UserName
+        value: dwnjeedx
+      - key: RabbitMQ__Password
+        value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
+      - key: RabbitMQ__VirtualHost
+        value: dwnjeedx
+      - key: Razorpay__KeyId
+        sync: false
+      - key: Razorpay__KeySecret
+        sync: false
+    autoDeploy: true
 
+  # ProgressService
   - type: web
     name: edulearn-progress-service
     env: dotnet
     buildCommand: dotnet publish EduLearn/src/Services/ProgressService/EduLearn.ProgressService.csproj -c Release -o ./publish/progress
     startCommand: dotnet ./publish/progress/EduLearn.ProgressService.dll --urls "http://0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: /api/progress/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_progress;User Id=postgres;Password=postgres;
+      - key: RabbitMQ__HostName
+        value: gerbil.rmq.cloudamqp.com
+      - key: RabbitMQ__Port
+        value: 5672
+      - key: RabbitMQ__UserName
+        value: dwnjeedx
+      - key: RabbitMQ__Password
+        value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
+      - key: RabbitMQ__VirtualHost
+        value: dwnjeedx
+    autoDeploy: true
 
+  # QuizService
   - type: web
     name: edulearn-quiz-service
     env: dotnet
     buildCommand: dotnet publish EduLearn/src/Services/QuizService/EduLearn.QuizService.csproj -c Release -o ./publish/quiz
     startCommand: dotnet ./publish/quiz/EduLearn.QuizService.dll --urls "http://0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: /api/quizzes/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_quizzes;User Id=postgres;Password=postgres;
+      - key: RabbitMQ__HostName
+        value: gerbil.rmq.cloudamqp.com
+      - key: RabbitMQ__Port
+        value: 5672
+      - key: RabbitMQ__UserName
+        value: dwnjeedx
+      - key: RabbitMQ__Password
+        value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
+      - key: RabbitMQ__VirtualHost
+        value: dwnjeedx
+    autoDeploy: true
 
+  # ReviewService
   - type: web
     name: edulearn-review-service
     env: dotnet
     buildCommand: dotnet publish EduLearn/src/Services/ReviewService/EduLearn.ReviewService.csproj -c Release -o ./publish/review
     startCommand: dotnet ./publish/review/EduLearn.ReviewService.dll --urls "http://0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: /api/reviews/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: DefaultConnection
+        value: Server=postgres;Database=edulearn_reviews;User Id=postgres;Password=postgres;
+      - key: RabbitMQ__HostName
+        value: gerbil.rmq.cloudamqp.com
+      - key: RabbitMQ__Port
+        value: 5672
+      - key: RabbitMQ__UserName
+        value: dwnjeedx
+      - key: RabbitMQ__Password
+        value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
+      - key: RabbitMQ__VirtualHost
+        value: dwnjeedx
+    autoDeploy: true
