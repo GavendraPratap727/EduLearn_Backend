@@ -10,7 +10,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: Jwt__SecretKey
-        generateValue: true
+        value: Your_Super_Secret_Key_At_Least_32_Chars_Long
       - key: Jwt__Issuer
         value: EduLearn
       - key: Jwt__Audience
@@ -39,6 +39,12 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: Your_Super_Secret_Key_At_Least_32_Chars_Long
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: ConnectionStrings__DefaultConnection
         value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
@@ -63,6 +69,12 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: Your_Super_Secret_Key_At_Least_32_Chars_Long
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: ConnectionStrings__DefaultConnection
         value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
@@ -87,6 +99,12 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: Your_Super_Secret_Key_At_Least_32_Chars_Long
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: ConnectionStrings__DefaultConnection
         value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
@@ -111,6 +129,12 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: Your_Super_Secret_Key_At_Least_32_Chars_Long
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: ConnectionStrings__DefaultConnection
         value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
@@ -139,6 +163,12 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: Your_Super_Secret_Key_At_Least_32_Chars_Long
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: ConnectionStrings__DefaultConnection
         value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
@@ -163,6 +193,12 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: Your_Super_Secret_Key_At_Least_32_Chars_Long
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: ConnectionStrings__DefaultConnection
         value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
@@ -187,6 +223,12 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: Your_Super_Secret_Key_At_Least_32_Chars_Long
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: ConnectionStrings__DefaultConnection
         value: Host=dpg-d81pf3gg4nts738b096g-a;Database=edulearn_rdal;Username=edulearn_rdal_user;Password=Q0CrP8xeOR8JmA5Rgglxg0x2bhvNBuYW;Port=5432;SSL Mode=Prefer;
       - key: RabbitMQ__HostName
