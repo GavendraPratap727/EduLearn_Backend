@@ -88,8 +88,8 @@ builder.Services.AddCors(options =>
             .WithOrigins(
                 "http://localhost:4200", 
                 "http://localhost:60804",
-                "https://edulearn-frontend.onrender.com", // Add your frontend Render URL
-                "https://your-frontend-domain.com" // Replace with your actual frontend domain
+                "https://edulearn-frontend-9lw4.onrender.com",
+                "https://edulearn-frontend.onrender.com"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
