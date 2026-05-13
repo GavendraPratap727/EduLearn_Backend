@@ -57,6 +57,8 @@ services:
         value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
       - key: RabbitMQ__VirtualHost
         value: dwnjeedx
+      - key: EnrollmentService__Url
+        value: https://edulearn-enrollment-service.onrender.com
     autoDeploy: true
 
   # EnrollmentService
@@ -87,6 +89,8 @@ services:
         value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
       - key: RabbitMQ__VirtualHost
         value: dwnjeedx
+      - key: CourseService__Url
+        value: https://edulearn-course-service.onrender.com
     autoDeploy: true
 
   # LessonService
@@ -151,6 +155,10 @@ services:
         sync: false
       - key: Razorpay__KeySecret
         sync: false
+      - key: EnrollmentService__Url
+        value: https://edulearn-enrollment-service.onrender.com
+      - key: ProgressService__Url
+        value: https://edulearn-progress-service.onrender.com
     autoDeploy: true
 
   # ProgressService
@@ -181,6 +189,12 @@ services:
         value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
       - key: RabbitMQ__VirtualHost
         value: dwnjeedx
+      - key: LessonService__Url
+        value: https://edulearn-lesson-service.onrender.com
+      - key: QuizService__Url
+        value: https://edulearn-quiz-service.onrender.com
+      - key: CourseService__Url
+        value: https://edulearn-course-service.onrender.com
     autoDeploy: true
 
   # QuizService
@@ -241,4 +255,8 @@ services:
         value: ZxxY8_y7zOUpfzXtQ88ZRI1Tx8RlrYQe
       - key: RabbitMQ__VirtualHost
         value: dwnjeedx
+      - key: EnrollmentService__Url
+        value: https://edulearn-enrollment-service.onrender.com
+      - key: ProgressService__Url
+        value: https://edulearn-progress-service.onrender.com
     autoDeploy: true
