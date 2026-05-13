@@ -207,4 +207,6 @@ app.MapGet("/api/lessons/course/{courseId}/count", async (Guid courseId, ILesson
 .WithName("GetLessonCount")
 .WithOpenApi();
 
+app.MapGet("/api/lessons/health", () => Results.Ok(new { Status = "Healthy", Service = "LessonService" }));
+
 app.Run();

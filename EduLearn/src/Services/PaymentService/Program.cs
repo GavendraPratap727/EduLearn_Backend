@@ -237,4 +237,6 @@ app.MapPost("/api/payments/webhook/razorpay", async (HttpContext context, IPayme
 })
 .WithName("RazorpayWebhook");
 
+app.MapGet("/api/payments/health", () => Results.Ok(new { Status = "Healthy", Service = "PaymentService" }));
+
 app.Run();

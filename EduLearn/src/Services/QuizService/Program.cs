@@ -265,4 +265,6 @@ app.MapGet("/api/quizzes/attempt-count/{studentId}/{quizId}", async (Guid studen
 .WithName("GetAttemptCount")
 .WithOpenApi();
 
+app.MapGet("/api/quizzes/health", () => Results.Ok(new { Status = "Healthy", Service = "QuizService" }));
+
 app.Run();

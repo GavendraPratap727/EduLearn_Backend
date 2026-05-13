@@ -251,4 +251,6 @@ app.MapGet("/api/reviews/hasReviewed/{studentId}/{courseId}", async (Guid studen
 
 // Database check endpoint removed for production fix
 
+app.MapGet("/api/reviews/health", () => Results.Ok(new { Status = "Healthy", Service = "ReviewService" }));
+
 app.Run();

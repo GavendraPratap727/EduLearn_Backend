@@ -319,4 +319,6 @@ app.MapGet("/api/progress/certificates/verify/{verificationCode}", async (string
 .WithName("VerifyCertificate")
 .WithOpenApi();
 
+app.MapGet("/api/progress/health", () => Results.Ok(new { Status = "Healthy", Service = "ProgressService" }));
+
 app.Run();

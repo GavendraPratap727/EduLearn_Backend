@@ -265,4 +265,6 @@ app.MapDelete("/api/enrollments/course/{id}", async (Guid id, IEnrollmentService
 .WithName("DeleteEnrollmentsByCourse")
 .WithOpenApi();
 
+app.MapGet("/api/enrollments/health", () => Results.Ok(new { Status = "Healthy", Service = "EnrollmentService" }));
+
 app.Run();
