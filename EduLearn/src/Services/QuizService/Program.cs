@@ -93,8 +93,7 @@ builder.Services.AddScoped<IQuizService, QuizService>();
 
 var app = builder.Build();
 
-// Configure port
-app.Urls.Add("http://localhost:5008");
+// Port configured via environment variables or command line arguments
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
