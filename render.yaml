@@ -17,10 +17,26 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: ConnectionStrings__DefaultConnection
+      - key: DB_HOST
         fromDatabase:
           name: edulearn-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edulearn-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edulearn-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edulearn-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edulearn-db
+          property: password
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -51,10 +67,26 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: ConnectionStrings__DefaultConnection
+      - key: DB_HOST
         fromDatabase:
           name: edulearn-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edulearn-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edulearn-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edulearn-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edulearn-db
+          property: password
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -85,10 +117,26 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: ConnectionStrings__DefaultConnection
+      - key: DB_HOST
         fromDatabase:
           name: edulearn-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edulearn-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edulearn-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edulearn-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edulearn-db
+          property: password
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -119,10 +167,26 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: ConnectionStrings__DefaultConnection
+      - key: DB_HOST
         fromDatabase:
           name: edulearn-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edulearn-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edulearn-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edulearn-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edulearn-db
+          property: password
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -153,10 +217,26 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: ConnectionStrings__DefaultConnection
+      - key: DB_HOST
         fromDatabase:
           name: edulearn-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edulearn-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edulearn-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edulearn-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edulearn-db
+          property: password
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -194,7 +274,23 @@ services:
       - key: ConnectionStrings__DefaultConnection
         fromDatabase:
           name: edulearn-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edulearn-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edulearn-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edulearn-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edulearn-db
+          property: password
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -228,7 +324,23 @@ services:
       - key: ConnectionStrings__DefaultConnection
         fromDatabase:
           name: edulearn-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edulearn-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edulearn-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edulearn-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edulearn-db
+          property: password
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -262,7 +374,23 @@ services:
       - key: ConnectionStrings__DefaultConnection
         fromDatabase:
           name: edulearn-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edulearn-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edulearn-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edulearn-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edulearn-db
+          property: password
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port

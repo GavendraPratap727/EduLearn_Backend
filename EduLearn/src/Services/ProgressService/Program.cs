@@ -80,15 +80,27 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
 });
 
-// Add DbContext
-builder.Services.AddDbContext<ProgressDbContext>(options =>
-{
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
                          ?? builder.Configuration["DefaultConnection"];
 
+    // If connectionString looks like a hostname or is missing, try constructing from individual components
+    if (string.IsNullOrEmpty(connectionString) || (!connectionString.Contains("=") && !connectionString.Contains("://")))
+    {
+        var dbHost = builder.Configuration["DB_HOST"] ?? connectionString; // fallback to what we have
+        var dbPort = builder.Configuration["DB_PORT"] ?? "5432";
+        var dbName = builder.Configuration["DB_NAME"];
+        var dbUser = builder.Configuration["DB_USER"];
+        var dbPass = builder.Configuration["DB_PASSWORD"];
+
+        if (!string.IsNullOrEmpty(dbHost) && !string.IsNullOrEmpty(dbName))
+        {
+            connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};Include Error Detail=true";
+        }
+    }
+
     if (string.IsNullOrEmpty(connectionString))
     {
-        Console.WriteLine("Warning: DefaultConnection not found. Falling back to local SQLite.");
+        Console.WriteLine("Warning: No database connection information found. Falling back to local SQLite.");
         options.UseSqlite("Data Source=progress_fallback.db");
     }
     else
