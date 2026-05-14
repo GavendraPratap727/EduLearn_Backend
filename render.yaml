@@ -271,7 +271,7 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: ConnectionStrings__DefaultConnection
+      - key: DB_HOST
         fromDatabase:
           name: edulearn-db
           property: host
@@ -321,7 +321,7 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: ConnectionStrings__DefaultConnection
+      - key: DB_HOST
         fromDatabase:
           name: edulearn-db
           property: host
@@ -371,7 +371,7 @@ services:
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: ConnectionStrings__DefaultConnection
+      - key: DB_HOST
         fromDatabase:
           name: edulearn-db
           property: host

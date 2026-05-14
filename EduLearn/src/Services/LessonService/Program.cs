@@ -91,9 +91,13 @@ builder.Services.AddDbContext<LessonDbContext>(options =>
         Console.WriteLine("Warning: No database connection information found. Falling back to local SQLite.");
         options.UseSqlite("Data Source=lesson_fallback.db");
     }
-    else
+    else if (connectionString.Contains("Data Source") || connectionString.Contains(".db"))
     {
         options.UseSqlite(connectionString);
+    }
+    else
+    {
+        options.UseNpgsql(connectionString);
     }
 });
 
