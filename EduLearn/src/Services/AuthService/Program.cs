@@ -81,7 +81,7 @@ builder.Services.AddDbContext<EduLearn.AuthService.Data.AuthDbContext>(options =
 
         if (!string.IsNullOrEmpty(dbHost) && !string.IsNullOrEmpty(dbName))
         {
-            connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};Include Error Detail=true";
+            connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
         }
     }
 
@@ -149,6 +149,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
+app.UseDeveloperExceptionPage(); // Temporary for debugging 500 errors in production
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
@@ -159,8 +160,15 @@ app.UseAuthorization();
 // Authentication endpoints
 app.MapPost("/api/auth/register", async (RegisterRequest request, IAuthService authService) =>
 {
-    var result = await authService.RegisterAsync(request);
-    return Results.Ok(result);
+    try 
+    {
+        var result = await authService.RegisterAsync(request);
+        return Results.Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(detail: ex.Message, title: "Registration Failed", statusCode: 500);
+    }
 })
 .WithName("Register")
 .WithOpenApi();
