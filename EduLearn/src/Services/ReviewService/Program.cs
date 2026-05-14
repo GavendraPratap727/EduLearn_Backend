@@ -20,7 +20,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         builder => builder
-            .WithOrigins("http://localhost:4200", "http://localhost:60804", "https://edulearn-frontend-9lw4.onrender.com")
+            .WithOrigins(
+                "http://localhost:4200", 
+                "http://localhost:60804",
+                "https://edulearn-frontend-9lw4.onrender.com",
+                "https://edulearn-frontend.onrender.com"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -77,13 +82,7 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<ReviewDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString != null && (connectionString.Contains("Data Source") || connectionString.Contains(".db")))
-        options.UseSqlite(connectionString);
-    else
-        options.UseNpgsql(connectionString);
-});
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Repository
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
@@ -249,8 +248,12 @@ app.MapGet("/api/reviews/hasReviewed/{studentId}/{courseId}", async (Guid studen
 .WithName("HasStudentReviewed")
 .WithOpenApi();
 
-// Database check endpoint removed for production fix
-
-app.MapGet("/api/reviews/health", () => Results.Ok(new { Status = "Healthy", Service = "ReviewService" }));
+// Simple endpoint to check database (for debugging)
+app.MapGet("/debug/check-reviews", () =>
+{
+    CheckReviews.CheckAllReviews();
+    return Results.Ok("Review check completed. Check console output.");
+})
+.WithName("CheckReviews");
 
 app.Run();

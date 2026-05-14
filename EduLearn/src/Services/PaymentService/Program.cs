@@ -20,7 +20,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         builder => builder
-            .WithOrigins("http://localhost:4200", "http://localhost:60804", "https://edulearn-frontend-9lw4.onrender.com")
+            .WithOrigins(
+                "http://localhost:4200", 
+                "http://localhost:60804",
+                "https://edulearn-frontend-9lw4.onrender.com",
+                "https://edulearn-frontend.onrender.com"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -79,13 +84,7 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<PaymentDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString != null && (connectionString.Contains("Data Source") || connectionString.Contains(".db")))
-        options.UseSqlite(connectionString);
-    else
-        options.UseNpgsql(connectionString);
-});
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Repository
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
@@ -236,7 +235,5 @@ app.MapPost("/api/payments/webhook/razorpay", async (HttpContext context, IPayme
     }
 })
 .WithName("RazorpayWebhook");
-
-app.MapGet("/api/payments/health", () => Results.Ok(new { Status = "Healthy", Service = "PaymentService" }));
 
 app.Run();

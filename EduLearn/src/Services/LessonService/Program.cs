@@ -67,13 +67,7 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<LessonDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString != null && (connectionString.Contains("Data Source") || connectionString.Contains(".db")))
-        options.UseSqlite(connectionString);
-    else
-        options.UseNpgsql(connectionString);
-});
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Repository
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
@@ -89,7 +83,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         builder => builder
-            .WithOrigins("http://localhost:4200", "http://localhost:60804", "https://edulearn-frontend-9lw4.onrender.com")
+            .WithOrigins(
+                "http://localhost:4200", 
+                "http://localhost:60804",
+                "https://edulearn-frontend-9lw4.onrender.com",
+                "https://edulearn-frontend.onrender.com"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -206,7 +205,5 @@ app.MapGet("/api/lessons/course/{courseId}/count", async (Guid courseId, ILesson
 })
 .WithName("GetLessonCount")
 .WithOpenApi();
-
-app.MapGet("/api/lessons/health", () => Results.Ok(new { Status = "Healthy", Service = "LessonService" }));
 
 app.Run();

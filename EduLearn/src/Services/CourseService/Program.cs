@@ -68,13 +68,7 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<CourseDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString != null && (connectionString.Contains("Data Source") || connectionString.Contains(".db")))
-        options.UseSqlite(connectionString);
-    else
-        options.UseNpgsql(connectionString);
-});
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Repository
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -91,7 +85,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         builder => builder
-            .WithOrigins("http://localhost:4200", "http://localhost:60804", "https://edulearn-frontend-9lw4.onrender.com")
+            .WithOrigins(
+                "http://localhost:4200", 
+                "http://localhost:60804",
+                "https://edulearn-frontend-9lw4.onrender.com",
+                "https://edulearn-frontend.onrender.com"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -336,8 +335,5 @@ app.MapPost("/api/courses/{id}/increment-enrollment", async (Guid id, ICourseSer
 })
 .WithName("IncrementEnrollment")
 .WithOpenApi();
-
-// Health check endpoint
-app.MapGet("/api/courses/health", () => Results.Ok(new { Status = "Healthy", Service = "CourseService" }));
 
 app.Run();

@@ -20,7 +20,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         builder => builder
-            .WithOrigins("http://localhost:4200", "http://localhost:60804", "https://edulearn-frontend-9lw4.onrender.com")
+            .WithOrigins(
+                "http://localhost:4200", 
+                "http://localhost:60804",
+                "https://edulearn-frontend-9lw4.onrender.com",
+                "https://edulearn-frontend.onrender.com"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -77,13 +82,7 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<QuizDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString != null && (connectionString.Contains("Data Source") || connectionString.Contains(".db")))
-        options.UseSqlite(connectionString);
-    else
-        options.UseNpgsql(connectionString);
-});
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Repository
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
@@ -93,7 +92,8 @@ builder.Services.AddScoped<IQuizService, QuizService>();
 
 var app = builder.Build();
 
-// Port configured via environment variables or command line arguments
+// Configure port
+app.Urls.Add("http://localhost:5008");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -263,7 +263,5 @@ app.MapGet("/api/quizzes/attempt-count/{studentId}/{quizId}", async (Guid studen
 .RequireAuthorization("Authenticated")
 .WithName("GetAttemptCount")
 .WithOpenApi();
-
-app.MapGet("/api/quizzes/health", () => Results.Ok(new { Status = "Healthy", Service = "QuizService" }));
 
 app.Run();
