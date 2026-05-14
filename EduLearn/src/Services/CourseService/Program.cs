@@ -68,7 +68,20 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<CourseDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                         ?? builder.Configuration["DefaultConnection"];
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        Console.WriteLine("Warning: DefaultConnection not found. Falling back to local SQLite.");
+        options.UseSqlite("Data Source=course_fallback.db");
+    }
+    else
+    {
+        options.UseSqlite(connectionString);
+    }
+});
 
 // Add Repository
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -99,11 +112,20 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize database
-using (var scope = app.Services.CreateScope())
+try
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
-    dbContext.Database.EnsureCreated();
-    SeedData.Initialize(dbContext);
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
+        Console.WriteLine("Initializing database...");
+        dbContext.Database.EnsureCreated();
+        SeedData.Initialize(dbContext);
+        Console.WriteLine("Database initialized successfully.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Critical Error: Database initialization failed: {ex.Message}");
 }
 
 // Configure the HTTP request pipeline.
