@@ -35,7 +35,7 @@ namespace EduLearn.PaymentService.Data
                     .HasDefaultValue("INR");
 
                 entity.Property(e => e.CreatedAt)
-                    .HasDefaultValueSql("datetime('now')");
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 // Indexes
                 entity.HasIndex(e => e.StudentId);
@@ -54,7 +54,7 @@ namespace EduLearn.PaymentService.Data
                     .IsRequired();
                 
                 entity.Property(e => e.CreatedAt)
-                    .HasDefaultValueSql("datetime('now')");
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.HasIndex(e => e.Email).IsUnique();
             });
@@ -68,7 +68,7 @@ namespace EduLearn.PaymentService.Data
                     .HasPrecision(18, 2);
                 
                 entity.Property(e => e.CreatedAt)
-                    .HasDefaultValueSql("datetime('now')");
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
 
             // Relationships

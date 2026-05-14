@@ -19,7 +19,7 @@ namespace EduLearn.EnrollmentService.Data
             {
                 entity.HasKey(e => e.EnrollmentId);
                 entity.Property(e => e.EnrollmentId).HasDefaultValueSql("newid()");
-                entity.Property(e => e.EnrolledAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.EnrolledAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
                 entity.Property(e => e.Status).HasDefaultValue(EnrollmentStatus.ACTIVE);
                 entity.Property(e => e.ProgressPercent).HasDefaultValue(0);
                 entity.Property(e => e.CertificateIssued).HasDefaultValue(false);

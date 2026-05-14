@@ -28,7 +28,7 @@ namespace EduLearn.CourseService.Data
                 entity.Property(e => e.ThumbnailUrl).HasMaxLength(500);
                 entity.Property(e => e.IsPublished).IsRequired().HasDefaultValue(false);
                 entity.Property(e => e.IsApproved).IsRequired().HasDefaultValue(false);
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
                 entity.Property(e => e.TotalDuration).IsRequired().HasDefaultValue(0);
                 entity.Property(e => e.EnrollmentCount).IsRequired().HasDefaultValue(0);
             });

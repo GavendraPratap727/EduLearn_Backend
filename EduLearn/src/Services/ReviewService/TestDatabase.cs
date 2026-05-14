@@ -9,7 +9,7 @@ namespace EduLearn.ReviewService
         public static void TestReviewData()
         {
             var options = new DbContextOptionsBuilder<ReviewDbContext>()
-                .UseSqlite("Data Source=ReviewService.db")
+                .UseNpgsql("Data Source=ReviewService.db")
                 .Options;
 
             using var context = new ReviewDbContext(options);

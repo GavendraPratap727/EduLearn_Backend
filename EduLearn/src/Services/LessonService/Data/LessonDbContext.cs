@@ -27,7 +27,7 @@ namespace EduLearn.LessonService.Data
                 entity.Property(e => e.DisplayOrder).IsRequired();
                 entity.Property(e => e.IsPreview).IsRequired().HasDefaultValue(false);
                 entity.Property(e => e.IsPublished).IsRequired().HasDefaultValue(false);
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
         }
     }
