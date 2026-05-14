@@ -108,9 +108,13 @@ builder.Services.AddDbContext<PaymentDbContext>(options =>
         Console.WriteLine("Warning: No database connection information found. Falling back to local SQLite.");
         options.UseSqlite("Data Source=payment_fallback.db");
     }
-    else
+    else if (connectionString.Contains("Data Source") || connectionString.Contains(".db"))
     {
         options.UseSqlite(connectionString);
+    }
+    else
+    {
+        options.UseNpgsql(connectionString);
     }
 });
 
