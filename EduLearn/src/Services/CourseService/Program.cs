@@ -137,8 +137,8 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
-        Console.WriteLine("Initializing database...");
-        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Applying migrations...");
+        dbContext.Database.Migrate();
         SeedData.Initialize(dbContext);
         Console.WriteLine("Database initialized successfully.");
     }
