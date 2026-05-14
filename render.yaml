@@ -18,25 +18,15 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DB_HOST
-        fromDatabase:
-          name: edulearn-db
-          property: host
+        value: dpg-d82qgp3rjlhs73dp1g80-a
       - key: DB_PORT
-        fromDatabase:
-          name: edulearn-db
-          property: port
+        value: "5432"
       - key: DB_NAME
-        fromDatabase:
-          name: edulearn-db
-          property: database
+        value: edulearn_db_l6gt
       - key: DB_USER
-        fromDatabase:
-          name: edulearn-db
-          property: user
+        value: edulearn_db_l6gt_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: edulearn-db
-          property: password
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -68,25 +58,15 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DB_HOST
-        fromDatabase:
-          name: edulearn-db
-          property: host
+        value: dpg-d82qgp3rjlhs73dp1g80-a
       - key: DB_PORT
-        fromDatabase:
-          name: edulearn-db
-          property: port
+        value: "5432"
       - key: DB_NAME
-        fromDatabase:
-          name: edulearn-db
-          property: database
+        value: edulearn_db_l6gt
       - key: DB_USER
-        fromDatabase:
-          name: edulearn-db
-          property: user
+        value: edulearn_db_l6gt_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: edulearn-db
-          property: password
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -118,25 +98,15 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DB_HOST
-        fromDatabase:
-          name: edulearn-db
-          property: host
+        value: dpg-d82qgp3rjlhs73dp1g80-a
       - key: DB_PORT
-        fromDatabase:
-          name: edulearn-db
-          property: port
+        value: "5432"
       - key: DB_NAME
-        fromDatabase:
-          name: edulearn-db
-          property: database
+        value: edulearn_db_l6gt
       - key: DB_USER
-        fromDatabase:
-          name: edulearn-db
-          property: user
+        value: edulearn_db_l6gt_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: edulearn-db
-          property: password
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -168,25 +138,15 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DB_HOST
-        fromDatabase:
-          name: edulearn-db
-          property: host
+        value: dpg-d82qgp3rjlhs73dp1g80-a
       - key: DB_PORT
-        fromDatabase:
-          name: edulearn-db
-          property: port
+        value: "5432"
       - key: DB_NAME
-        fromDatabase:
-          name: edulearn-db
-          property: database
+        value: edulearn_db_l6gt
       - key: DB_USER
-        fromDatabase:
-          name: edulearn-db
-          property: user
+        value: edulearn_db_l6gt_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: edulearn-db
-          property: password
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -218,25 +178,15 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DB_HOST
-        fromDatabase:
-          name: edulearn-db
-          property: host
+        value: dpg-d82qgp3rjlhs73dp1g80-a
       - key: DB_PORT
-        fromDatabase:
-          name: edulearn-db
-          property: port
+        value: "5432"
       - key: DB_NAME
-        fromDatabase:
-          name: edulearn-db
-          property: database
+        value: edulearn_db_l6gt
       - key: DB_USER
-        fromDatabase:
-          name: edulearn-db
-          property: user
+        value: edulearn_db_l6gt_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: edulearn-db
-          property: password
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -272,25 +222,15 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DB_HOST
-        fromDatabase:
-          name: edulearn-db
-          property: host
+        value: dpg-d82qgp3rjlhs73dp1g80-a
       - key: DB_PORT
-        fromDatabase:
-          name: edulearn-db
-          property: port
+        value: "5432"
       - key: DB_NAME
-        fromDatabase:
-          name: edulearn-db
-          property: database
+        value: edulearn_db_l6gt
       - key: DB_USER
-        fromDatabase:
-          name: edulearn-db
-          property: user
+        value: edulearn_db_l6gt_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: edulearn-db
-          property: password
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -322,25 +262,15 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DB_HOST
-        fromDatabase:
-          name: edulearn-db
-          property: host
+        value: dpg-d82qgp3rjlhs73dp1g80-a
       - key: DB_PORT
-        fromDatabase:
-          name: edulearn-db
-          property: port
+        value: "5432"
       - key: DB_NAME
-        fromDatabase:
-          name: edulearn-db
-          property: database
+        value: edulearn_db_l6gt
       - key: DB_USER
-        fromDatabase:
-          name: edulearn-db
-          property: user
+        value: edulearn_db_l6gt_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: edulearn-db
-          property: password
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -372,25 +302,15 @@ services:
       - key: Jwt__Audience
         value: EduLearnUsers
       - key: DB_HOST
-        fromDatabase:
-          name: edulearn-db
-          property: host
+        value: dpg-d82qgp3rjlhs73dp1g80-a
       - key: DB_PORT
-        fromDatabase:
-          name: edulearn-db
-          property: port
+        value: "5432"
       - key: DB_NAME
-        fromDatabase:
-          name: edulearn-db
-          property: database
+        value: edulearn_db_l6gt
       - key: DB_USER
-        fromDatabase:
-          name: edulearn-db
-          property: user
+        value: edulearn_db_l6gt_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: edulearn-db
-          property: password
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
