@@ -24,13 +24,14 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 # The SERVICE_NAME env var (from render.yaml) tells us which subfolder and DLL to run
-# Example: SERVICE_NAME=AuthService -> runs /app/Auth/EduLearn.AuthService.dll
-ENTRYPOINT ["sh", "-c", "if [ \"$SERVICE_NAME\" = \"AuthService\" ]; then dotnet Auth/EduLearn.AuthService.dll; \
-    elif [ \"$SERVICE_NAME\" = \"CourseService\" ]; then dotnet Course/EduLearn.CourseService.dll; \
-    elif [ \"$SERVICE_NAME\" = \"EnrollmentService\" ]; then dotnet Enrollment/EduLearn.EnrollmentService.dll; \
-    elif [ \"$SERVICE_NAME\" = \"LessonService\" ]; then dotnet Lesson/EduLearn.LessonService.dll; \
-    elif [ \"$SERVICE_NAME\" = \"PaymentService\" ]; then dotnet Payment/EduLearn.PaymentService.dll; \
-    elif [ \"$SERVICE_NAME\" = \"ProgressService\" ]; then dotnet Progress/EduLearn.ProgressService.dll; \
-    elif [ \"$SERVICE_NAME\" = \"QuizService\" ]; then dotnet Quiz/EduLearn.QuizService.dll; \
-    elif [ \"$SERVICE_NAME\" = \"ReviewService\" ]; then dotnet Review/EduLearn.ReviewService.dll; \
-    else echo \"Unknown Service: $SERVICE_NAME\"; exit 1; fi --urls http://0.0.0.0:${PORT:-8080}"]
+ENTRYPOINT ["sh", "-c", "case \"$SERVICE_NAME\" in \
+    \"AuthService\") dotnet Auth/EduLearn.AuthService.dll --urls http://0.0.0.0:${PORT:-8080} ;; \
+    \"CourseService\") dotnet Course/EduLearn.CourseService.dll --urls http://0.0.0.0:${PORT:-8080} ;; \
+    \"EnrollmentService\") dotnet Enrollment/EduLearn.EnrollmentService.dll --urls http://0.0.0.0:${PORT:-8080} ;; \
+    \"LessonService\") dotnet Lesson/EduLearn.LessonService.dll --urls http://0.0.0.0:${PORT:-8080} ;; \
+    \"PaymentService\") dotnet Payment/EduLearn.PaymentService.dll --urls http://0.0.0.0:${PORT:-8080} ;; \
+    \"ProgressService\") dotnet Progress/EduLearn.ProgressService.dll --urls http://0.0.0.0:${PORT:-8080} ;; \
+    \"QuizService\") dotnet Quiz/EduLearn.QuizService.dll --urls http://0.0.0.0:${PORT:-8080} ;; \
+    \"ReviewService\") dotnet Review/EduLearn.ReviewService.dll --urls http://0.0.0.0:${PORT:-8080} ;; \
+    *) echo \"Unknown Service: $SERVICE_NAME\"; exit 1 ;; \
+    esac"]
