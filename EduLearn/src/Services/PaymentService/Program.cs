@@ -100,7 +100,7 @@ builder.Services.AddDbContext<PaymentDbContext>(options =>
 
         if (!string.IsNullOrEmpty(dbHost) && !string.IsNullOrEmpty(dbName))
         {
-            connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};Include Error Detail=true";
+            connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
         }
     }
 
