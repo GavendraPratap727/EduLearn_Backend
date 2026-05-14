@@ -98,6 +98,22 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Initialize database
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
+    if (app.Environment.IsDevelopment())
+    {
+        dbContext.Database.EnsureCreated();
+    }
+    else
+    {
+        // For production, we still use EnsureCreated for SQLite or migrations for Postgres
+        // But since we are using a shared Postgres, EnsureCreated is safer for initial setup
+        dbContext.Database.EnsureCreated();
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

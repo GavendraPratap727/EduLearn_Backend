@@ -95,6 +95,13 @@ builder.Services.AddScoped<IProgressService, ProgressService>();
 
 var app = builder.Build();
 
+// Create database if it doesn't exist
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ProgressDbContext>();
+    dbContext.Database.EnsureCreated();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -316,6 +323,14 @@ app.MapGet("/api/progress/certificates/verify/{verificationCode}", async (string
     return Results.Ok(result);
 })
 .WithName("VerifyCertificate")
+.WithOpenApi();
+
+// Health check endpoint
+app.MapGet("/api/progress/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "ProgressService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
 .WithOpenApi();
 
 app.Run();

@@ -92,8 +92,12 @@ builder.Services.AddScoped<IQuizService, QuizService>();
 
 var app = builder.Build();
 
-// Configure port
-app.Urls.Add("http://localhost:5008");
+// Create database if it doesn't exist
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<QuizDbContext>();
+    dbContext.Database.EnsureCreated();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -262,6 +266,14 @@ app.MapGet("/api/quizzes/attempt-count/{studentId}/{quizId}", async (Guid studen
 })
 .RequireAuthorization("Authenticated")
 .WithName("GetAttemptCount")
+.WithOpenApi();
+
+// Health check endpoint
+app.MapGet("/api/quizzes/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "QuizService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
 .WithOpenApi();
 
 app.Run();

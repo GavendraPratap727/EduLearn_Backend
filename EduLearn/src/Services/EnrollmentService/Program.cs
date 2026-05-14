@@ -264,4 +264,12 @@ app.MapDelete("/api/enrollments/course/{id}", async (Guid id, IEnrollmentService
 .WithName("DeleteEnrollmentsByCourse")
 .WithOpenApi();
 
+// Health check endpoint
+app.MapGet("/api/enrollments/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "EnrollmentService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
+.WithOpenApi();
+
 app.Run();

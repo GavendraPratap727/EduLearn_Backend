@@ -236,4 +236,12 @@ app.MapPost("/api/payments/webhook/razorpay", async (HttpContext context, IPayme
 })
 .WithName("RazorpayWebhook");
 
+// Health check endpoint
+app.MapGet("/api/payments/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "PaymentService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
+.WithOpenApi();
+
 app.Run();

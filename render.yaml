@@ -12,7 +12,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: Jwt__SecretKey
-        generateValue: true
+        value: edulearn-super-secret-key-2024-microservices-architecture
       - key: Jwt__Issuer
         value: EduLearn
       - key: Jwt__Audience
@@ -45,6 +45,12 @@ services:
         value: CourseService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: DefaultConnection
         fromDatabase:
           name: edulearn-db
@@ -73,6 +79,12 @@ services:
         value: EnrollmentService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: DefaultConnection
         fromDatabase:
           name: edulearn-db
@@ -101,6 +113,12 @@ services:
         value: LessonService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: DefaultConnection
         fromDatabase:
           name: edulearn-db
@@ -129,6 +147,12 @@ services:
         value: PaymentService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: DefaultConnection
         fromDatabase:
           name: edulearn-db
@@ -161,6 +185,12 @@ services:
         value: ProgressService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: DefaultConnection
         fromDatabase:
           name: edulearn-db
@@ -189,6 +219,12 @@ services:
         value: QuizService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: DefaultConnection
         fromDatabase:
           name: edulearn-db
@@ -217,6 +253,12 @@ services:
         value: ReviewService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
       - key: DefaultConnection
         fromDatabase:
           name: edulearn-db
