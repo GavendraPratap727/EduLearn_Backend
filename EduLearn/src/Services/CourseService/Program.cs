@@ -336,4 +336,12 @@ app.MapPost("/api/courses/{id}/increment-enrollment", async (Guid id, ICourseSer
 .WithName("IncrementEnrollment")
 .WithOpenApi();
 
+// Health check endpoint
+app.MapGet("/api/courses/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "CourseService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
+.WithOpenApi();
+
 app.Run();

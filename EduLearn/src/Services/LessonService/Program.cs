@@ -96,6 +96,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Create database if it doesn't exist
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<LessonDbContext>();
+    dbContext.Database.EnsureCreated();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -204,6 +211,14 @@ app.MapGet("/api/lessons/course/{courseId}/count", async (Guid courseId, ILesson
     return Results.Ok(result);
 })
 .WithName("GetLessonCount")
+.WithOpenApi();
+
+// Health check endpoint
+app.MapGet("/api/lessons/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "LessonService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
 .WithOpenApi();
 
 app.Run();

@@ -95,6 +95,13 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 
 var app = builder.Build();
 
+// Create database if it doesn't exist
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ReviewDbContext>();
+    dbContext.Database.EnsureCreated();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -246,6 +253,14 @@ app.MapGet("/api/reviews/hasReviewed/{studentId}/{courseId}", async (Guid studen
 })
 .RequireAuthorization("Authenticated")
 .WithName("HasStudentReviewed")
+.WithOpenApi();
+
+// Health check endpoint
+app.MapGet("/api/reviews/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "ReviewService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
 .WithOpenApi();
 
 app.Run();
