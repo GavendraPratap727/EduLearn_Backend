@@ -67,8 +67,18 @@ builder.Services.AddAuthorization(options =>
 // Add DbContext
 builder.Services.AddDbContext<EduLearn.AuthService.Data.AuthDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString != null && (connectionString.Contains("Data Source") || connectionString.Contains(".db")))
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                         ?? builder.Configuration["DefaultConnection"];
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        // Fallback or log error
+        Console.WriteLine("Warning: DefaultConnection not found. Falling back to local SQLite.");
+        options.UseSqlite("Data Source=auth_fallback.db");
+        return;
+    }
+
+    if (connectionString.Contains("Data Source") || connectionString.Contains(".db"))
         options.UseSqlite(connectionString);
     else
         options.UseNpgsql(connectionString);
@@ -99,19 +109,20 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize database
-using (var scope = app.Services.CreateScope())
+try
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
-    if (app.Environment.IsDevelopment())
+    using (var scope = app.Services.CreateScope())
     {
+        var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
+        Console.WriteLine("Initializing database...");
         dbContext.Database.EnsureCreated();
+        Console.WriteLine("Database initialized successfully.");
     }
-    else
-    {
-        // For production, we still use EnsureCreated for SQLite or migrations for Postgres
-        // But since we are using a shared Postgres, EnsureCreated is safer for initial setup
-        dbContext.Database.EnsureCreated();
-    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Critical Error: Database initialization failed: {ex.Message}");
+    // We allow the app to continue so we can see health check logs, but it might fail later
 }
 
 // Configure the HTTP request pipeline.
