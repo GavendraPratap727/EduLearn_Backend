@@ -82,6 +82,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
 });
 
+// Add DbContext
+builder.Services.AddDbContext<PaymentDbContext>(options =>
+{
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
                          ?? builder.Configuration["DefaultConnection"];
 
