@@ -68,36 +68,36 @@ builder.Services.AddAuthorization(options =>
 // Add DbContext
 builder.Services.AddDbContext<LessonDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-                         ?? builder.Configuration["DefaultConnection"];
+    var dbHost = builder.Configuration["DB_HOST"];
+    var dbPort = builder.Configuration["DB_PORT"] ?? "5432";
+    var dbName = builder.Configuration["DB_NAME"];
+    var dbUser = builder.Configuration["DB_USER"];
+    var dbPass = builder.Configuration["DB_PASSWORD"];
 
-    // If connectionString looks like a hostname or is missing, try constructing from individual components
-    if (string.IsNullOrEmpty(connectionString) || (!connectionString.Contains("=") && !connectionString.Contains("://")))
+    string? connectionString = null;
+
+    if (!string.IsNullOrWhiteSpace(dbHost) && !string.IsNullOrWhiteSpace(dbName))
     {
-        var dbHost = builder.Configuration["DB_HOST"] ?? connectionString; // fallback to what we have
-        var dbPort = builder.Configuration["DB_PORT"] ?? "5432";
-        var dbName = builder.Configuration["DB_NAME"];
-        var dbUser = builder.Configuration["DB_USER"];
-        var dbPass = builder.Configuration["DB_PASSWORD"];
-
-        if (!string.IsNullOrEmpty(dbHost) && !string.IsNullOrEmpty(dbName))
-        {
-            connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
-        }
+        connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
+    }
+    else
+    {
+        connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                         ?? builder.Configuration["DefaultConnection"];
     }
 
-    if (string.IsNullOrEmpty(connectionString))
+    if (string.IsNullOrWhiteSpace(connectionString))
     {
         Console.WriteLine("Warning: No database connection information found. Falling back to local SQLite.");
         options.UseSqlite("Data Source=lesson_fallback.db");
     }
     else if (connectionString.Contains("Data Source") || connectionString.Contains(".db"))
     {
-        options.UseSqlite(connectionString);
+        options.UseSqlite(connectionString.Trim());
     }
     else
     {
-        options.UseNpgsql(connectionString);
+        options.UseNpgsql(connectionString.Trim());
     }
 });
 
