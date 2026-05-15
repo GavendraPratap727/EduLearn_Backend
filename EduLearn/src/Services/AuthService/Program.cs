@@ -131,14 +131,18 @@ var app = builder.Build();
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
         
-        // Final Forced Reset: Drop the most problematic tables if they exist
-        // Using unquoted names to match PostgreSQL's default lowercase behavior
+        // Nuclear Reset: Drop ALL tables in the public schema using a PostgreSQL-specific block
         try {
-            Console.WriteLine("Force Reset: Dropping known tables (unquoted)...");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS UserRoles CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Roles CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Users CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
+            Console.WriteLine("Force Reset: Wiping all tables in public schema...");
+            dbContext.Database.ExecuteSqlRaw(@"
+                DO $$ DECLARE
+                    r RECORD;
+                BEGIN
+                    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+                        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
+                    END LOOP;
+                END $$;");
+            Console.WriteLine("Database wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
@@ -183,7 +187,7 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IAuthService a
     catch (Exception ex)
     {
         var errorDetail = ex.InnerException != null ? $"{ex.Message} | Inner: {ex.InnerException.Message}" : ex.Message;
-        errorDetail += " | [V3-CRASH-ON-FAIL]";
+        errorDetail += " | [V4-NUCLEAR-PLSQL]";
         Console.WriteLine($"Registration Error: {ex}");
         return Results.Problem(detail: errorDetail, title: "Registration Failed", statusCode: 500);
     }
