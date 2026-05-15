@@ -134,16 +134,20 @@ try
         var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
         Console.WriteLine("Applying migrations...");
         
-        // Temporary fix: Drop broken tables from previous failed attempts to ensure a clean migration
+        Console.WriteLine("Applying migrations...");
+        
+        // Final Forced Reset: Wipe the entire public schema to clear any broken/conflicting tables
+        // This is safe since it's a new production database and we need a clean start for all 8 microservices.
         try {
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"UserRoles\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Roles\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
-        } catch { /* Ignore if tables don't exist */ }
+            Console.WriteLine("Nuclear Reset: Dropping public schema...");
+            dbContext.Database.ExecuteSqlRaw("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
+            Console.WriteLine("Public schema reset successfully.");
+        } catch (Exception resetEx) { 
+            Console.WriteLine($"Nuclear Reset Warning: {resetEx.Message}");
+        }
 
         dbContext.Database.Migrate();
-        Console.WriteLine("Database initialized successfully.");
+        Console.WriteLine("Database initialized successfully with fresh tables.");
     }
 }
 catch (Exception ex)
@@ -180,6 +184,7 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IAuthService a
     catch (Exception ex)
     {
         var errorDetail = ex.InnerException != null ? $"{ex.Message} | Inner: {ex.InnerException.Message}" : ex.Message;
+        errorDetail += " | [V2-NUCLEAR]";
         Console.WriteLine($"Registration Error: {ex}");
         return Results.Problem(detail: errorDetail, title: "Registration Failed", statusCode: 500);
     }

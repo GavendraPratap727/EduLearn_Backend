@@ -139,13 +139,6 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
         Console.WriteLine("Applying migrations...");
-        
-        // Temporary fix: Drop broken tables from previous failed attempts to ensure a clean migration
-        try {
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Courses\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
-        } catch { /* Ignore if tables don't exist */ }
-
         dbContext.Database.Migrate();
         SeedData.Initialize(dbContext);
         Console.WriteLine("Database initialized successfully.");
