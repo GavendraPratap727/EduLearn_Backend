@@ -97,7 +97,7 @@ builder.Services.AddDbContext<LessonDbContext>(options =>
     }
     else
     {
-        options.UseNpgsql(connectionString.Trim());
+        options.UseNpgsql(connectionString.Trim(), x => x.MigrationsHistoryTable("__LessonMigrationsHistory"));
     }
 });
 

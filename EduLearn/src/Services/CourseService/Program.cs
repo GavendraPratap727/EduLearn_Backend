@@ -98,7 +98,7 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
     }
     else
     {
-        options.UseNpgsql(connectionString.Trim());
+        options.UseNpgsql(connectionString.Trim(), x => x.MigrationsHistoryTable("__CourseMigrationsHistory"));
     }
 });
 
