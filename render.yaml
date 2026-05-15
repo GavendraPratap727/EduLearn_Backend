@@ -12,15 +12,21 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: Jwt__SecretKey
-        generateValue: true
+        value: edulearn-super-secret-key-2024-microservices-architecture
       - key: Jwt__Issuer
         value: EduLearn
       - key: Jwt__Audience
         value: EduLearnUsers
-      - key: DefaultConnection
-        fromDatabase:
-          name: edulearn-db
-          property: connectionString
+      - key: DB_HOST
+        value: dpg-d82qgp3rjlhs73dp1g80-a
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: edulearn_db_l6gt
+      - key: DB_USER
+        value: edulearn_db_l6gt_user
+      - key: DB_PASSWORD
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -45,10 +51,22 @@ services:
         value: CourseService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
-        fromDatabase:
-          name: edulearn-db
-          property: connectionString
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DB_HOST
+        value: dpg-d82qgp3rjlhs73dp1g80-a
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: edulearn_db_l6gt
+      - key: DB_USER
+        value: edulearn_db_l6gt_user
+      - key: DB_PASSWORD
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -73,10 +91,22 @@ services:
         value: EnrollmentService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
-        fromDatabase:
-          name: edulearn-db
-          property: connectionString
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DB_HOST
+        value: dpg-d82qgp3rjlhs73dp1g80-a
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: edulearn_db_l6gt
+      - key: DB_USER
+        value: edulearn_db_l6gt_user
+      - key: DB_PASSWORD
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -101,10 +131,22 @@ services:
         value: LessonService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
-        fromDatabase:
-          name: edulearn-db
-          property: connectionString
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DB_HOST
+        value: dpg-d82qgp3rjlhs73dp1g80-a
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: edulearn_db_l6gt
+      - key: DB_USER
+        value: edulearn_db_l6gt_user
+      - key: DB_PASSWORD
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -129,10 +171,22 @@ services:
         value: PaymentService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
-        fromDatabase:
-          name: edulearn-db
-          property: connectionString
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DB_HOST
+        value: dpg-d82qgp3rjlhs73dp1g80-a
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: edulearn_db_l6gt
+      - key: DB_USER
+        value: edulearn_db_l6gt_user
+      - key: DB_PASSWORD
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -161,10 +215,22 @@ services:
         value: ProgressService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
-        fromDatabase:
-          name: edulearn-db
-          property: connectionString
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DB_HOST
+        value: dpg-d82qgp3rjlhs73dp1g80-a
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: edulearn_db_l6gt
+      - key: DB_USER
+        value: edulearn_db_l6gt_user
+      - key: DB_PASSWORD
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -189,10 +255,22 @@ services:
         value: QuizService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
-        fromDatabase:
-          name: edulearn-db
-          property: connectionString
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DB_HOST
+        value: dpg-d82qgp3rjlhs73dp1g80-a
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: edulearn_db_l6gt
+      - key: DB_USER
+        value: edulearn_db_l6gt_user
+      - key: DB_PASSWORD
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port
@@ -217,10 +295,22 @@ services:
         value: ReviewService
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DefaultConnection
-        fromDatabase:
-          name: edulearn-db
-          property: connectionString
+      - key: Jwt__SecretKey
+        value: edulearn-super-secret-key-2024-microservices-architecture
+      - key: Jwt__Issuer
+        value: EduLearn
+      - key: Jwt__Audience
+        value: EduLearnUsers
+      - key: DB_HOST
+        value: dpg-d82qgp3rjlhs73dp1g80-a
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: edulearn_db_l6gt
+      - key: DB_USER
+        value: edulearn_db_l6gt_user
+      - key: DB_PASSWORD
+        value: P4KCmESccupwa1DoH1DibIyGG6vCzUw6
       - key: RabbitMQ__HostName
         value: gerbil.rmq.cloudamqp.com
       - key: RabbitMQ__Port

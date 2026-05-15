@@ -68,7 +68,39 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<CourseDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var dbHost = builder.Configuration["DB_HOST"];
+    var dbPort = builder.Configuration["DB_PORT"] ?? "5432";
+    var dbName = builder.Configuration["DB_NAME"];
+    var dbUser = builder.Configuration["DB_USER"];
+    var dbPass = builder.Configuration["DB_PASSWORD"];
+
+    string? connectionString = null;
+
+    if (!string.IsNullOrWhiteSpace(dbHost) && !string.IsNullOrWhiteSpace(dbName))
+    {
+        connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
+    }
+    else
+    {
+        connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                         ?? builder.Configuration["DefaultConnection"];
+    }
+
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        Console.WriteLine("Warning: No database connection information found. Falling back to local SQLite.");
+        options.UseSqlite("Data Source=course_fallback.db");
+    }
+    else if (connectionString.Contains("Data Source") || connectionString.Contains(".db"))
+    {
+        options.UseSqlite(connectionString.Trim());
+    }
+    else
+    {
+        options.UseNpgsql(connectionString.Trim(), x => x.MigrationsHistoryTable("__CourseMigrationsHistory"));
+    }
+});
 
 // Add Repository
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -89,7 +121,9 @@ builder.Services.AddCors(options =>
                 "http://localhost:4200", 
                 "http://localhost:60804",
                 "https://edulearn-frontend-9lw4.onrender.com",
-                "https://edulearn-frontend.onrender.com"
+                "https://edulearn-frontend.onrender.com",
+                "https://edulearn-frontends.onrender.com",
+                "https://edulearn-frontend-zn5e.onrender.com"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -99,19 +133,29 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize database
-using (var scope = app.Services.CreateScope())
+try
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
-    dbContext.Database.EnsureCreated();
-    SeedData.Initialize(dbContext);
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
+        Console.WriteLine("Applying migrations...");
+        dbContext.Database.Migrate();
+        SeedData.Initialize(dbContext);
+        Console.WriteLine("Database initialized successfully.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Critical Error: Database initialization failed: {ex.Message}");
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CourseService API V1");
+    c.RoutePrefix = "swagger";
+});
 
 app.UseCors("AllowFrontend");
 if (!app.Environment.IsDevelopment())
@@ -334,6 +378,14 @@ app.MapPost("/api/courses/{id}/increment-enrollment", async (Guid id, ICourseSer
     return Results.Ok(new { Success = true, Message = "Enrollment incremented successfully" });
 })
 .WithName("IncrementEnrollment")
+.WithOpenApi();
+
+// Health check endpoint
+app.MapGet("/api/courses/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "CourseService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
 .WithOpenApi();
 
 app.Run();

@@ -24,7 +24,9 @@ builder.Services.AddCors(options =>
                 "http://localhost:4200", 
                 "http://localhost:60804",
                 "https://edulearn-frontend-9lw4.onrender.com",
-                "https://edulearn-frontend.onrender.com"
+                "https://edulearn-frontend.onrender.com",
+                "https://edulearn-frontends.onrender.com",
+                "https://edulearn-frontend-zn5e.onrender.com"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -82,7 +84,39 @@ builder.Services.AddAuthorization(options =>
 
 // Add DbContext
 builder.Services.AddDbContext<ReviewDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var dbHost = builder.Configuration["DB_HOST"];
+    var dbPort = builder.Configuration["DB_PORT"] ?? "5432";
+    var dbName = builder.Configuration["DB_NAME"];
+    var dbUser = builder.Configuration["DB_USER"];
+    var dbPass = builder.Configuration["DB_PASSWORD"];
+
+    string? connectionString = null;
+
+    if (!string.IsNullOrWhiteSpace(dbHost) && !string.IsNullOrWhiteSpace(dbName))
+    {
+        connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
+    }
+    else
+    {
+        connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                         ?? builder.Configuration["DefaultConnection"];
+    }
+
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        Console.WriteLine("Warning: No database connection information found. Falling back to local SQLite.");
+        options.UseSqlite("Data Source=review_fallback.db");
+    }
+    else if (connectionString.Contains("Data Source") || connectionString.Contains(".db"))
+    {
+        options.UseSqlite(connectionString.Trim());
+    }
+    else
+    {
+        options.UseNpgsql(connectionString.Trim(), x => x.MigrationsHistoryTable("__ReviewMigrationsHistory"));
+    }
+});
 
 // Add Repository
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
@@ -95,12 +129,29 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Initialize database
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ReviewDbContext>();
+        Console.WriteLine("Applying migrations...");
+        dbContext.Database.Migrate();
+        Console.WriteLine("Database initialized successfully.");
+    }
 }
+catch (Exception ex)
+{
+    Console.WriteLine($"Critical Error: Database initialization failed: {ex.Message}");
+}
+
+// Configure the HTTP request pipeline.
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ReviewService API V1");
+    c.RoutePrefix = "swagger";
+});
 
 if (!app.Environment.IsDevelopment())
 {
@@ -246,6 +297,14 @@ app.MapGet("/api/reviews/hasReviewed/{studentId}/{courseId}", async (Guid studen
 })
 .RequireAuthorization("Authenticated")
 .WithName("HasStudentReviewed")
+.WithOpenApi();
+
+// Health check endpoint
+app.MapGet("/api/reviews/health", () =>
+{
+    return Results.Ok(new { status = "Healthy", service = "ReviewService", timestamp = DateTime.UtcNow });
+})
+.WithName("HealthCheck")
 .WithOpenApi();
 
 app.Run();

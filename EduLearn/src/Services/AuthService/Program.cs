@@ -67,11 +67,37 @@ builder.Services.AddAuthorization(options =>
 // Add DbContext
 builder.Services.AddDbContext<EduLearn.AuthService.Data.AuthDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString != null && (connectionString.Contains("Data Source") || connectionString.Contains(".db")))
-        options.UseSqlite(connectionString);
+    var dbHost = builder.Configuration["DB_HOST"];
+    var dbPort = builder.Configuration["DB_PORT"] ?? "5432";
+    var dbName = builder.Configuration["DB_NAME"];
+    var dbUser = builder.Configuration["DB_USER"];
+    var dbPass = builder.Configuration["DB_PASSWORD"];
+
+    string? connectionString = null;
+
+    if (!string.IsNullOrWhiteSpace(dbHost) && !string.IsNullOrWhiteSpace(dbName))
+    {
+        connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
+    }
     else
-        options.UseNpgsql(connectionString);
+    {
+        connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                         ?? builder.Configuration["DefaultConnection"];
+    }
+
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        Console.WriteLine("Warning: No database connection information found. Falling back to local SQLite.");
+        options.UseSqlite("Data Source=auth_fallback.db");
+    }
+    else if (connectionString.Contains("Data Source") || connectionString.Contains(".db"))
+    {
+        options.UseSqlite(connectionString.Trim());
+    }
+    else
+    {
+        options.UseNpgsql(connectionString.Trim(), x => x.MigrationsHistoryTable("__AuthMigrationsHistory"));
+    }
 });
 
 // Add Repository
@@ -89,7 +115,9 @@ builder.Services.AddCors(options =>
                 "http://localhost:4200", 
                 "http://localhost:60804",
                 "https://edulearn-frontend-9lw4.onrender.com",
-                "https://edulearn-frontend.onrender.com"
+                "https://edulearn-frontend.onrender.com",
+                "https://edulearn-frontends.onrender.com",
+                "https://edulearn-frontend-zn5e.onrender.com"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -98,14 +126,45 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Initialize database
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
+        
+        // Final Forced Reset: Drop the most problematic tables if they exist
+        // Using unquoted names to match PostgreSQL's default lowercase behavior
+        try {
+            Console.WriteLine("Force Reset: Dropping known tables (unquoted)...");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS UserRoles CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Roles CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Users CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
+        } catch (Exception ex) { 
+            Console.WriteLine($"Reset Warning: {ex.Message}");
+        }
+
+        Console.WriteLine("Applying migrations...");
+        try {
+            dbContext.Database.Migrate();
+            Console.WriteLine("Database initialized successfully.");
+        } catch (Exception migrateEx) {
+            Console.WriteLine($"CRITICAL: Migration failed: {migrateEx.Message}");
+            if (migrateEx.InnerException != null) 
+                Console.WriteLine($"INNER ERROR: {migrateEx.InnerException.Message}");
+            throw; // Crash to let Render report the failure
+        }
+    }
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthService API V1");
+    c.RoutePrefix = "swagger";
+});
 
 app.UseCors("AllowFrontend");
+app.UseDeveloperExceptionPage(); // Temporary for debugging 500 errors in production
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
@@ -116,8 +175,18 @@ app.UseAuthorization();
 // Authentication endpoints
 app.MapPost("/api/auth/register", async (RegisterRequest request, IAuthService authService) =>
 {
-    var result = await authService.RegisterAsync(request);
-    return Results.Ok(result);
+    try 
+    {
+        var result = await authService.RegisterAsync(request);
+        return Results.Ok(result);
+    }
+    catch (Exception ex)
+    {
+        var errorDetail = ex.InnerException != null ? $"{ex.Message} | Inner: {ex.InnerException.Message}" : ex.Message;
+        errorDetail += " | [V3-CRASH-ON-FAIL]";
+        Console.WriteLine($"Registration Error: {ex}");
+        return Results.Problem(detail: errorDetail, title: "Registration Failed", statusCode: 500);
+    }
 })
 .WithName("Register")
 .WithOpenApi();
