@@ -141,10 +141,13 @@ try
             Console.WriteLine("Force Reset: Wiping all tables in public schema...");
             dbContext.Database.ExecuteSqlRaw(@"
                 DO $$ DECLARE
-                    r RECORD;
-                BEGIN
+                    -- Drop all tables
                     FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
                         EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
+                    END LOOP;
+                    -- Drop all sequences
+                    FOR r IN (SELECT relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind = 'S' AND n.nspname = 'public') LOOP
+                        EXECUTE 'DROP SEQUENCE IF EXISTS ' || quote_ident(r.relname) || ' CASCADE';
                     END LOOP;
                 END $$;");
             Console.WriteLine("Database wipe successful.");
@@ -178,6 +181,26 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseCors("AllowFrontend");
+
+// Global Error Handler to preserve CORS headers on crash
+app.Use(async (context, next) => {
+    try {
+        await next();
+    } catch (Exception ex) {
+        Console.WriteLine($"CRASH [V5]: {ex.Message}");
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        // Ensure CORS headers are present even on 500
+        if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")) {
+            context.Response.Headers.Add("Access-Control-Allow-Origin", context.Request.Headers["Origin"].ToString() ?? "*");
+        }
+        await context.Response.WriteAsJsonAsync(new { 
+            error = ex.Message, 
+            detail = ex.InnerException?.Message,
+            marker = "V5-GLOBAL-CATCH"
+        });
+    }
+});
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
