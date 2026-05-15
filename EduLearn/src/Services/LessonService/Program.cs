@@ -137,6 +137,12 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<LessonDbContext>();
         Console.WriteLine("Applying migrations...");
+        
+        try {
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Lessons\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
+        } catch { }
+
         dbContext.Database.Migrate();
         Console.WriteLine("Database initialized successfully.");
     }

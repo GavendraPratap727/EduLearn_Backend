@@ -133,6 +133,13 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<QuizDbContext>();
         Console.WriteLine("Applying migrations...");
+        
+        try {
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"QuizAttempts\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Quizzes\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
+        } catch { }
+
         dbContext.Database.Migrate();
         Console.WriteLine("Database initialized successfully.");
     }
