@@ -133,17 +133,11 @@ var app = builder.Build();
         
         // Nuclear Reset: Drop ALL tables and sequences in the public schema
         try {
-            Console.WriteLine("Force Reset: Wiping all tables and sequences in public schema...");
-            dbContext.Database.ExecuteSqlRaw(@"
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
             Console.WriteLine("Force Reset: Wiping AuthService tables...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
             Console.WriteLine("AuthService table wipe successful.");
-        } catch (Exception ex) { 
-            Console.WriteLine($"Reset Warning: {ex.Message}");
-        }
-            Console.WriteLine("Database wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }

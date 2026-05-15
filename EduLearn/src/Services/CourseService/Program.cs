@@ -139,19 +139,11 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
         // Nuclear Reset: Drop ALL tables in the public schema using a PostgreSQL-specific block
-        try {
-            Console.WriteLine("Force Reset: Wiping all tables in public schema...");
-            dbContext.Database.ExecuteSqlRaw(@"
-                DO $$ DECLARE
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
             Console.WriteLine("Force Reset: Wiping CourseService tables...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Courses\" CASCADE;");
             Console.WriteLine("CourseService table wipe successful.");
-        } catch (Exception ex) { 
-            Console.WriteLine($"Reset Warning: {ex.Message}");
-        }
-            Console.WriteLine("Database wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
