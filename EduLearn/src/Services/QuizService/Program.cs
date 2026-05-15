@@ -114,7 +114,7 @@ builder.Services.AddDbContext<QuizDbContext>(options =>
     }
     else
     {
-        options.UseNpgsql(connectionString.Trim());
+        options.UseNpgsql(connectionString.Trim(), x => x.MigrationsHistoryTable("__QuizMigrationsHistory"));
     }
 });
 

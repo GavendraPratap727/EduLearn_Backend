@@ -96,7 +96,7 @@ builder.Services.AddDbContext<EduLearn.AuthService.Data.AuthDbContext>(options =
     }
     else
     {
-        options.UseNpgsql(connectionString.Trim());
+        options.UseNpgsql(connectionString.Trim(), x => x.MigrationsHistoryTable("__AuthMigrationsHistory"));
     }
 });
 

@@ -116,7 +116,7 @@ builder.Services.AddDbContext<PaymentDbContext>(options =>
     }
     else
     {
-        options.UseNpgsql(connectionString.Trim());
+        options.UseNpgsql(connectionString.Trim(), x => x.MigrationsHistoryTable("__PaymentMigrationsHistory"));
     }
 });
 
