@@ -132,8 +132,8 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<QuizDbContext>();
-        Console.WriteLine("Applying migrations...");
-        dbContext.Database.Migrate();
+        Console.WriteLine("Applying schema (EnsureCreated)...");
+        dbContext.Database.EnsureCreated();
         Console.WriteLine("Database initialized successfully.");
     }
 }
