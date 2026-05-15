@@ -143,15 +143,15 @@ var app = builder.Build();
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
-        Console.WriteLine("Applying migrations...");
+        Console.WriteLine("Applying schema (EnsureCreated)...");
         try {
-            dbContext.Database.Migrate();
-            Console.WriteLine("Database initialized successfully.");
-        } catch (Exception migrateEx) {
-            Console.WriteLine($"CRITICAL: Migration failed: {migrateEx.Message}");
-            if (migrateEx.InnerException != null) 
-                Console.WriteLine($"INNER ERROR: {migrateEx.InnerException.Message}");
-            throw; // Crash to let Render report the failure
+            dbContext.Database.EnsureCreated();
+            Console.WriteLine("Database schema applied successfully.");
+        } catch (Exception dbEx) {
+            Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
+            if (dbEx.InnerException != null) 
+                Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
+            throw; 
         }
     }
 
