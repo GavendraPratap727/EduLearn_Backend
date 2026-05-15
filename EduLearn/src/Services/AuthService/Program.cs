@@ -132,21 +132,27 @@ var app = builder.Build();
         var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
         
         // Final Forced Reset: Drop the most problematic tables if they exist
-        // Using a more reliable DROP command that works even with limited permissions
+        // Using unquoted names to match PostgreSQL's default lowercase behavior
         try {
-            Console.WriteLine("Force Reset: Dropping known tables...");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"UserRoles\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Roles\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
-            // Also drop the standard history table if it exists
+            Console.WriteLine("Force Reset: Dropping known tables (unquoted)...");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS UserRoles CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Roles CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Users CASCADE;");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
         Console.WriteLine("Applying migrations...");
-        dbContext.Database.Migrate();
-        Console.WriteLine("Database initialized successfully.");
+        try {
+            dbContext.Database.Migrate();
+            Console.WriteLine("Database initialized successfully.");
+        } catch (Exception migrateEx) {
+            Console.WriteLine($"CRITICAL: Migration failed: {migrateEx.Message}");
+            if (migrateEx.InnerException != null) 
+                Console.WriteLine($"INNER ERROR: {migrateEx.InnerException.Message}");
+            throw; // Crash to let Render report the failure
+        }
     }
 
 // Configure the HTTP request pipeline.
