@@ -19,7 +19,7 @@ public DbSet<Certificate> Certificates { get; set; }
             modelBuilder.Entity<LessonProgress>(entity =>
             {
                 entity.HasKey(e => e.ProgressId);
-                entity.Property(e => e.ProgressId).HasDefaultValueSql("newid()");
+                entity.Property(e => e.ProgressId).ValueGeneratedOnAdd();
                 entity.Property(e => e.IsCompleted).HasDefaultValue(false);
                 entity.Property(e => e.WatchedSeconds).HasDefaultValue(0);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
