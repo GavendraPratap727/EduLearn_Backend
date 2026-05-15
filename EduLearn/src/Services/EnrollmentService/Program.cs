@@ -146,9 +146,17 @@ using (var scope = app.Services.CreateScope())
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
-        Console.WriteLine("Applying schema (EnsureCreated)...");
-        dbContext.Database.EnsureCreated();
-        Console.WriteLine("Database initialized successfully.");
+        Console.WriteLine("Applying schema (Forced Create)...");
+        try {
+            // EnsureCreated skips if ANY table exists. We force it by running the script manually.
+            var script = dbContext.Database.GenerateCreateScript();
+            dbContext.Database.ExecuteSqlRaw(script);
+            Console.WriteLine("Database initialized successfully via forced script.");
+        } catch (Exception ex) {
+            Console.WriteLine($"Forced Create Note: {ex.Message} (Usually means tables already exist).");
+            // Fallback to EnsureCreated just in case
+            dbContext.Database.EnsureCreated();
+        }
     } 
     catch (Exception dbEx) 
     {

@@ -135,15 +135,18 @@ using (var scope = app.Services.CreateScope())
         
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
-            Console.WriteLine("Force Reset: Wiping AuthService tables...");
+            Console.WriteLine("Force Reset [V7]: Wiping AuthService tables and history...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Roles\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"UserRoles\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__AuthMigrationsHistory\" CASCADE;");
             Console.WriteLine("AuthService table wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
-        Console.WriteLine("Applying schema (EnsureCreated)...");
-        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Applying schema (Migrate)...");
+        dbContext.Database.Migrate();
         Console.WriteLine("Database schema applied successfully.");
     } 
     catch (Exception dbEx) 

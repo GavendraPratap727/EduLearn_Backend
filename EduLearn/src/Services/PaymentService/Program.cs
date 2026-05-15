@@ -144,15 +144,16 @@ using (var scope = app.Services.CreateScope())
         
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
-            Console.WriteLine("Force Reset: Wiping PaymentService tables...");
+            Console.WriteLine("Force Reset [V7]: Wiping PaymentService tables and history...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Payments\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__PaymentMigrationsHistory\" CASCADE;");
             Console.WriteLine("PaymentService table wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
-        Console.WriteLine("Applying schema (EnsureCreated)...");
-        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Applying schema (Migrate)...");
+        dbContext.Database.Migrate();
         Console.WriteLine("Database initialized successfully.");
     } 
     catch (Exception dbEx) 
