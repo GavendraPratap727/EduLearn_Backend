@@ -136,12 +136,6 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<ReviewDbContext>();
         Console.WriteLine("Applying migrations...");
-        
-        try {
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Reviews\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
-        } catch { }
-
         dbContext.Database.Migrate();
         Console.WriteLine("Database initialized successfully.");
     }
