@@ -147,6 +147,8 @@ using (var scope = app.Services.CreateScope())
         try {
             Console.WriteLine("Force Reset [V8]: Wiping PaymentService tables...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Payments\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Courses\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Students\" CASCADE;");
             Console.WriteLine("PaymentService table wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
