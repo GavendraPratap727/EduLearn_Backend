@@ -136,9 +136,32 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<EnrollmentDbContext>();
+        // Nuclear Reset: Drop ALL tables in the public schema using a PostgreSQL-specific block
+        try {
+            Console.WriteLine("Force Reset: Wiping all tables in public schema...");
+            dbContext.Database.ExecuteSqlRaw(@"
+                DO $$ DECLARE
+                    r RECORD;
+                BEGIN
+                    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+                        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
+                    END LOOP;
+                END $$;");
+            Console.WriteLine("Database wipe successful.");
+        } catch (Exception ex) { 
+            Console.WriteLine($"Reset Warning: {ex.Message}");
+        }
+
         Console.WriteLine("Applying schema (EnsureCreated)...");
-        dbContext.Database.EnsureCreated();
-        Console.WriteLine("Database initialized successfully.");
+        try {
+            dbContext.Database.EnsureCreated();
+            Console.WriteLine("Database initialized successfully.");
+        } catch (Exception dbEx) {
+            Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
+            if (dbEx.InnerException != null) 
+                Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
+            throw; 
+        }
     }
 }
 catch (Exception ex)
