@@ -136,8 +136,14 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<EnrollmentDbContext>();
-        Console.WriteLine("Initializing database...");
-        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Applying migrations...");
+        
+        try {
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Enrollments\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
+        } catch { }
+
+        dbContext.Database.Migrate();
         Console.WriteLine("Database initialized successfully.");
     }
 }

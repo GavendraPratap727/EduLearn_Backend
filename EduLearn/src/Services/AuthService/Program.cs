@@ -133,6 +133,15 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
         Console.WriteLine("Applying migrations...");
+        
+        // Temporary fix: Drop broken tables from previous failed attempts to ensure a clean migration
+        try {
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"UserRoles\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Roles\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
+        } catch { /* Ignore if tables don't exist */ }
+
         dbContext.Database.Migrate();
         Console.WriteLine("Database initialized successfully.");
     }
