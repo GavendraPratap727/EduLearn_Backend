@@ -130,34 +130,33 @@ builder.Services.AddScoped<IProgressService, ProgressService>();
 var app = builder.Build();
 
 // Initialize database
-try
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    try 
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<ProgressDbContext>();
+        
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
             Console.WriteLine("Force Reset: Wiping ProgressService tables...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"LessonProgress\" CASCADE;");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Certificates\" CASCADE;");
             Console.WriteLine("ProgressService table wipe successful.");
+        } catch (Exception ex) { 
+            Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
         Console.WriteLine("Applying schema (EnsureCreated)...");
-        try {
-            dbContext.Database.EnsureCreated();
-            Console.WriteLine("Database initialized successfully.");
-        } catch (Exception dbEx) {
-            Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
-            if (dbEx.InnerException != null) 
-                Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
-            throw; 
-        }
+        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Database initialized successfully.");
+    } 
+    catch (Exception dbEx) 
+    {
+        Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
+        if (dbEx.InnerException != null) 
+            Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
+        throw; 
     }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Critical Error: Database initialization failed: {ex.Message}");
 }
 
 // Configure the HTTP request pipeline.
