@@ -127,34 +127,27 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize database
-try
-{
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
-        Console.WriteLine("Applying migrations...");
         
-        Console.WriteLine("Applying migrations...");
-        
-        // Final Forced Reset: Wipe the entire public schema to clear any broken/conflicting tables
-        // This is safe since it's a new production database and we need a clean start for all 8 microservices.
+        // Final Forced Reset: Drop the most problematic tables if they exist
+        // Using a more reliable DROP command that works even with limited permissions
         try {
-            Console.WriteLine("Nuclear Reset: Dropping public schema...");
-            dbContext.Database.ExecuteSqlRaw("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
-            Console.WriteLine("Public schema reset successfully.");
-        } catch (Exception resetEx) { 
-            Console.WriteLine($"Nuclear Reset Warning: {resetEx.Message}");
+            Console.WriteLine("Force Reset: Dropping known tables...");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"UserRoles\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Roles\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
+            // Also drop the standard history table if it exists
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;");
+        } catch (Exception ex) { 
+            Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
+        Console.WriteLine("Applying migrations...");
         dbContext.Database.Migrate();
-        Console.WriteLine("Database initialized successfully with fresh tables.");
+        Console.WriteLine("Database initialized successfully.");
     }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Critical Error: Database initialization failed: {ex.Message}");
-    // We allow the app to continue so we can see health check logs, but it might fail later
-}
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
@@ -184,7 +177,7 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IAuthService a
     catch (Exception ex)
     {
         var errorDetail = ex.InnerException != null ? $"{ex.Message} | Inner: {ex.InnerException.Message}" : ex.Message;
-        errorDetail += " | [V2-NUCLEAR]";
+        errorDetail += " | [V3-CRASH-ON-FAIL]";
         Console.WriteLine($"Registration Error: {ex}");
         return Results.Problem(detail: errorDetail, title: "Registration Failed", statusCode: 500);
     }
