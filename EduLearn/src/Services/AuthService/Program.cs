@@ -117,7 +117,8 @@ builder.Services.AddCors(options =>
                 "https://edulearn-frontend-9lw4.onrender.com",
                 "https://edulearn-frontend.onrender.com",
                 "https://edulearn-frontends.onrender.com",
-                "https://edulearn-frontend-zn5e.onrender.com"
+                "https://edulearn-frontend-zn5e.onrender.com",
+                "https://edulearn-frontend-m3s4.onrender.com"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
