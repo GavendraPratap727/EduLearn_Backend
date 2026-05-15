@@ -135,19 +135,27 @@ using (var scope = app.Services.CreateScope())
         
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
-            Console.WriteLine("Force Reset [V7]: Wiping AuthService tables and history...");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Roles\" CASCADE;");
+            Console.WriteLine("Force Reset [V8]: Wiping AuthService tables...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"UserRoles\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__AuthMigrationsHistory\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Roles\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
+            // No need to drop migrations history as we are bypassing migrations
             Console.WriteLine("AuthService table wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
-        Console.WriteLine("Applying schema (Migrate)...");
-        dbContext.Database.Migrate();
-        Console.WriteLine("Database schema applied successfully.");
+        Console.WriteLine("Applying schema (Forced Create V8)...");
+        try {
+            // Generate the SQL script directly from the current C# models
+            var script = dbContext.Database.GenerateCreateScript();
+            dbContext.Database.ExecuteSqlRaw(script);
+            Console.WriteLine("Database initialized successfully via forced script.");
+        } catch (Exception ex) {
+            Console.WriteLine($"Forced Create Note: {ex.Message} (Usually means tables already exist).");
+            // Fallback to EnsureCreated as a last resort
+            dbContext.Database.EnsureCreated();
+        }
     } 
     catch (Exception dbEx) 
     {

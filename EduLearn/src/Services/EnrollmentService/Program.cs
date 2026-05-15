@@ -139,7 +139,7 @@ using (var scope = app.Services.CreateScope())
         
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
-            Console.WriteLine("Force Reset: Wiping EnrollmentService tables...");
+            Console.WriteLine("Force Reset [V8]: Wiping EnrollmentService tables...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Enrollments\" CASCADE;");
             Console.WriteLine("EnrollmentService table wipe successful.");
         } catch (Exception ex) { 

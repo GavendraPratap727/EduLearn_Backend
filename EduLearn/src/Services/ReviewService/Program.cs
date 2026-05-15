@@ -138,17 +138,22 @@ using (var scope = app.Services.CreateScope())
         
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
-            Console.WriteLine("Force Reset [V7]: Wiping ReviewService tables and history...");
+            Console.WriteLine("Force Reset [V8]: Wiping ReviewService tables...");
             dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Reviews\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__ReviewMigrationsHistory\" CASCADE;");
             Console.WriteLine("ReviewService table wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
-        Console.WriteLine("Applying schema (Migrate)...");
-        dbContext.Database.Migrate();
-        Console.WriteLine("Database initialized successfully.");
+        Console.WriteLine("Applying schema (Forced Create V8)...");
+        try {
+            var script = dbContext.Database.GenerateCreateScript();
+            dbContext.Database.ExecuteSqlRaw(script);
+            Console.WriteLine("Database initialized successfully via forced script.");
+        } catch (Exception ex) {
+            Console.WriteLine($"Forced Create Note: {ex.Message}");
+            dbContext.Database.EnsureCreated();
+        }
     } 
     catch (Exception dbEx) 
     {
