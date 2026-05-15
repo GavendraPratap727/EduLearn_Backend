@@ -48,6 +48,7 @@ namespace EduLearn.PaymentService.Data
             // Student configuration
             modelBuilder.Entity<Student>(entity =>
             {
+                entity.ToTable("Payment_Students");
                 entity.HasKey(e => e.StudentId);
                 
                 entity.Property(e => e.Email)
@@ -62,6 +63,7 @@ namespace EduLearn.PaymentService.Data
             // Course configuration
             modelBuilder.Entity<Course>(entity =>
             {
+                entity.ToTable("Payment_Courses");
                 entity.HasKey(e => e.CourseId);
                 
                 entity.Property(e => e.Price)

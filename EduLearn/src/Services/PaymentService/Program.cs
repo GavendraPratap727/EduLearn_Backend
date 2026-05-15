@@ -143,12 +143,12 @@ using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<PaymentDbContext>();
         
-        // Super-Aggressive Reset [V9]: Ensure all tables are gone
+        // Super-Aggressive Reset [V10]: Ensure ONLY PaymentService tables are gone
         try {
-            Console.WriteLine("Super Reset [V9]: Wiping all PaymentService tables...");
+            Console.WriteLine("Super Reset [V10]: Wiping PaymentService tables...");
             var dropCommand = "DROP TABLE IF EXISTS \"Payments\" CASCADE; " +
-                              "DROP TABLE IF EXISTS \"Courses\" CASCADE; " +
-                              "DROP TABLE IF EXISTS \"Students\" CASCADE; " +
+                              "DROP TABLE IF EXISTS \"Payment_Courses\" CASCADE; " +
+                              "DROP TABLE IF EXISTS \"Payment_Students\" CASCADE; " +
                               "DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;";
             dbContext.Database.ExecuteSqlRaw(dropCommand);
             Console.WriteLine("PaymentService table wipe successful.");
