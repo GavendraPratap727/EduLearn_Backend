@@ -127,42 +127,33 @@ builder.Services.AddScoped<IQuizService, QuizService>();
 var app = builder.Build();
 
 // Initialize database
-try
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    try 
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<QuizDbContext>();
-        // Nuclear Reset: Drop ALL tables in the public schema using a PostgreSQL-specific block
+        
+        // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
-            Console.WriteLine("Force Reset: Wiping all tables in public schema...");
-            dbContext.Database.ExecuteSqlRaw(@"
-                DO $$ DECLARE
-                    r RECORD;
-                BEGIN
-                    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-                        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
-                    END LOOP;
-                END $$;");
-            Console.WriteLine("Database wipe successful.");
+            Console.WriteLine("Force Reset: Wiping QuizService tables...");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"QuizAttempts\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Quizzes\" CASCADE;");
+            Console.WriteLine("QuizService table wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
         Console.WriteLine("Applying schema (EnsureCreated)...");
-        try {
-            dbContext.Database.EnsureCreated();
-            Console.WriteLine("Database initialized successfully.");
-        } catch (Exception dbEx) {
-            Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
-            if (dbEx.InnerException != null) 
-                Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
-            throw; 
-        }
+        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Database initialized successfully.");
+    } 
+    catch (Exception dbEx) 
+    {
+        Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
+        if (dbEx.InnerException != null) 
+            Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
+        throw; 
     }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Critical Error: Database initialization failed: {ex.Message}");
 }
 
 // Configure the HTTP request pipeline.

@@ -127,12 +127,12 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize database
-    using (var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateScope())
+{
+    try 
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<EduLearn.AuthService.Data.AuthDbContext>();
         
-        // Nuclear Reset: Drop ALL tables and sequences in the public schema
-        try {
         // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
             Console.WriteLine("Force Reset: Wiping AuthService tables...");
@@ -143,16 +143,17 @@ var app = builder.Build();
         }
 
         Console.WriteLine("Applying schema (EnsureCreated)...");
-        try {
-            dbContext.Database.EnsureCreated();
-            Console.WriteLine("Database schema applied successfully.");
-        } catch (Exception dbEx) {
-            Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
-            if (dbEx.InnerException != null) 
-                Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
-            throw; 
-        }
+        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Database schema applied successfully.");
+    } 
+    catch (Exception dbEx) 
+    {
+        Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
+        if (dbEx.InnerException != null) 
+            Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
+        throw; 
     }
+}
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
