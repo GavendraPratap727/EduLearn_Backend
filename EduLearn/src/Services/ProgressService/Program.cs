@@ -135,20 +135,12 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<ProgressDbContext>();
-        // Nuclear Reset: Drop ALL tables in the public schema using a PostgreSQL-specific block
+        // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
         try {
-            Console.WriteLine("Force Reset: Wiping all tables in public schema...");
-            dbContext.Database.ExecuteSqlRaw(@"
-                DO $$ DECLARE
-                    r RECORD;
-                BEGIN
-                    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-                        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
-                    END LOOP;
-                END $$;");
-            Console.WriteLine("Database wipe successful.");
-        } catch (Exception ex) { 
-            Console.WriteLine($"Reset Warning: {ex.Message}");
+            Console.WriteLine("Force Reset: Wiping ProgressService tables...");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"LessonProgress\" CASCADE;");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Certificates\" CASCADE;");
+            Console.WriteLine("ProgressService table wipe successful.");
         }
 
         Console.WriteLine("Applying schema (EnsureCreated)...");
@@ -182,6 +174,26 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStaticFiles();
 app.UseCors("AllowFrontend");
+
+// Global Error Handler to preserve CORS headers on crash
+app.Use(async (context, next) => {
+    try {
+        await next();
+    } catch (Exception ex) {
+        Console.WriteLine($"CRASH [V6]: {ex.Message}");
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        // Ensure CORS headers are present even on 500
+        if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")) {
+            context.Response.Headers.Add("Access-Control-Allow-Origin", context.Request.Headers["Origin"].ToString() ?? "*");
+        }
+        await context.Response.WriteAsJsonAsync(new { 
+            error = ex.Message, 
+            detail = ex.InnerException?.Message,
+            marker = "V6-GLOBAL-CATCH"
+        });
+    }
+});
 app.UseAuthentication();
 app.UseAuthorization();
 

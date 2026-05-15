@@ -135,18 +135,14 @@ var app = builder.Build();
         try {
             Console.WriteLine("Force Reset: Wiping all tables and sequences in public schema...");
             dbContext.Database.ExecuteSqlRaw(@"
-                DO $$ DECLARE
-                    r RECORD;
-                BEGIN
-                    -- Drop all tables
-                    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-                        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
-                    END LOOP;
-                    -- Drop all sequences
-                    FOR r IN (SELECT relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind = 'S' AND n.nspname = 'public') LOOP
-                        EXECUTE 'DROP SEQUENCE IF EXISTS ' || quote_ident(r.relname) || ' CASCADE';
-                    END LOOP;
-                END $$;");
+        // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
+        try {
+            Console.WriteLine("Force Reset: Wiping AuthService tables...");
+            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Users\" CASCADE;");
+            Console.WriteLine("AuthService table wipe successful.");
+        } catch (Exception ex) { 
+            Console.WriteLine($"Reset Warning: {ex.Message}");
+        }
             Console.WriteLine("Database wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
@@ -211,7 +207,7 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IAuthService a
     catch (Exception ex)
     {
         var errorDetail = ex.InnerException != null ? $"{ex.Message} | Inner: {ex.InnerException.Message}" : ex.Message;
-        errorDetail += " | [V4-NUCLEAR-PLSQL]";
+        errorDetail += " | [V6-TARGETED-RESET]";
         Console.WriteLine($"Registration Error: {ex}");
         return Results.Problem(detail: errorDetail, title: "Registration Failed", statusCode: 500);
     }
