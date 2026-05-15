@@ -144,11 +144,12 @@ catch (Exception ex)
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthService API V1");
+    c.RoutePrefix = "swagger";
+});
 
 app.UseCors("AllowFrontend");
 app.UseDeveloperExceptionPage(); // Temporary for debugging 500 errors in production
@@ -169,7 +170,9 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IAuthService a
     }
     catch (Exception ex)
     {
-        return Results.Problem(detail: ex.Message, title: "Registration Failed", statusCode: 500);
+        var errorDetail = ex.InnerException != null ? $"{ex.Message} | Inner: {ex.InnerException.Message}" : ex.Message;
+        Console.WriteLine($"Registration Error: {ex}");
+        return Results.Problem(detail: errorDetail, title: "Registration Failed", statusCode: 500);
     }
 })
 .WithName("Register")
