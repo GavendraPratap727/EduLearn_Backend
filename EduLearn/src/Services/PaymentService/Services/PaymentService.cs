@@ -33,13 +33,13 @@ namespace EduLearn.PaymentService.Services
             try
             {
                 // Get course details to determine amount
-                var course = await GetCourseDetailsAsync(request.CourseId);
+                var (course, error) = await GetCourseDetailsInternalAsync(request.CourseId);
                 if (course == null)
                 {
                     return new PaymentOrderResponse
                     {
                         Success = false,
-                        Message = "Course not found"
+                        Message = $"Course not found: {error}"
                     };
                 }
 
@@ -402,7 +402,7 @@ namespace EduLearn.PaymentService.Services
             }
         }
 
-        private async Task<Course?> GetCourseDetailsAsync(Guid courseId)
+        private async Task<(Course? course, string? error)> GetCourseDetailsInternalAsync(Guid courseId)
         {
             try
             {
@@ -410,7 +410,7 @@ namespace EduLearn.PaymentService.Services
                 var existingCourse = await _context.Courses.FindAsync(courseId);
                 if (existingCourse != null)
                 {
-                    return existingCourse;
+                    return (existingCourse, null);
                 }
 
                 // Create the course if it doesn't exist
@@ -426,9 +426,9 @@ namespace EduLearn.PaymentService.Services
                 _context.Courses.Add(newCourse);
                 await _context.SaveChangesAsync();
                 
-                return newCourse;
+                return (newCourse, null);
             }
-            catch
+            catch (Exception ex)
             {
                 // Detach the failed entity to avoid poisoning the context
                 var entry = _context.ChangeTracker.Entries<Course>().FirstOrDefault(e => e.Entity.CourseId == courseId);
@@ -436,8 +436,17 @@ namespace EduLearn.PaymentService.Services
                 {
                     entry.State = EntityState.Detached;
                 }
-                return null;
+                
+                var errorMsg = ex.InnerException != null ? $"{ex.Message} | {ex.InnerException.Message}" : ex.Message;
+                return (null, errorMsg);
             }
+        }
+
+        // Keep the old method for compatibility if needed elsewhere
+        private async Task<Course?> GetCourseDetailsAsync(Guid courseId)
+        {
+            var (course, _) = await GetCourseDetailsInternalAsync(courseId);
+            return course;
         }
 
         private async Task TriggerEnrollmentAsync(Guid studentId, Guid courseId)

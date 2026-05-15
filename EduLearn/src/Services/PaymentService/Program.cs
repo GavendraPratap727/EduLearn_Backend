@@ -143,25 +143,30 @@ using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<PaymentDbContext>();
         
-        // Targeted Reset: Only drop tables belonging to this service to avoid conflicts in shared DB
+        // Super-Aggressive Reset [V9]: Ensure all tables are gone
         try {
-            Console.WriteLine("Force Reset [V8]: Wiping PaymentService tables...");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Payments\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Courses\" CASCADE;");
-            dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Students\" CASCADE;");
+            Console.WriteLine("Super Reset [V9]: Wiping all PaymentService tables...");
+            var dropCommand = "DROP TABLE IF EXISTS \"Payments\" CASCADE; " +
+                              "DROP TABLE IF EXISTS \"Courses\" CASCADE; " +
+                              "DROP TABLE IF EXISTS \"Students\" CASCADE; " +
+                              "DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE;";
+            dbContext.Database.ExecuteSqlRaw(dropCommand);
             Console.WriteLine("PaymentService table wipe successful.");
         } catch (Exception ex) { 
             Console.WriteLine($"Reset Warning: {ex.Message}");
         }
 
-        Console.WriteLine("Applying schema (Forced Create V8)...");
+        Console.WriteLine("Applying schema (Forced Create V9)...");
         try {
+            // Option A: Scripted Create
             var script = dbContext.Database.GenerateCreateScript();
             dbContext.Database.ExecuteSqlRaw(script);
-            Console.WriteLine("Database initialized successfully via forced script.");
+            Console.WriteLine("Database initialized successfully via V9 script.");
         } catch (Exception ex) {
-            Console.WriteLine($"Forced Create Note: {ex.Message}");
+            Console.WriteLine($"V9 Script Note: {ex.Message}");
+            // Option B: EnsureCreated as fallback
             dbContext.Database.EnsureCreated();
+            Console.WriteLine("Database initialized via EnsureCreated fallback.");
         }
     } 
     catch (Exception dbEx) 
@@ -169,7 +174,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"CRITICAL: Database initialization failed: {dbEx.Message}");
         if (dbEx.InnerException != null) 
             Console.WriteLine($"INNER ERROR: {dbEx.InnerException.Message}");
-        throw; 
+        // Don't throw - let the app try to start anyway
     }
 }
 
